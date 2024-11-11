@@ -10,7 +10,7 @@ int buscaIterativa(const int vetor[], int tamanho, int valor) {
         int valorMeio = vetor[indiceMeio];
 
         if (valor == valorMeio) {
-            return indiceMeio;  // Valor encontrado
+            return indiceMeio;  
         }
 
         if (valor < valorMeio) {
@@ -30,16 +30,15 @@ int main() {
     // Definição de um vetor ordenado
     int vetor[] = {1, 3, 5, 7, 9, 11, 13, 15, 17, 19};
     int tamanho = sizeof(vetor) / sizeof(vetor[0]);
-    int valorProcurado = 7;
-
-    // Uso da função iterativa
+    int valorProcurado = 77;
+    
     int resultadoIterativo = buscaIterativa(vetor, tamanho, valorProcurado);
 
 
     if (resultadoIterativo != -1) {
-        std::cout << "Iterativa: Valor " << valorProcurado << " encontrado no índice " << resultadoIterativo << std::endl;
+        std::cout << "O valor " << valorProcurado <<  " foi encontrado no indice " << resultadoIterativo << "." << std::endl;
     } else {
-        std::cout << "Iterativa: Valor " << valorProcurado << " não encontrado" << std::endl;
+        std::cout << "O valor " << valorProcurado << " nao foi encontrado." << std::endl;
     }
 
     return 0;
