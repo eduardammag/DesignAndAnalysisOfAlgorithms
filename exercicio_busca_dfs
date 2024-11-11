@@ -1,0 +1,76 @@
+#include <iostream>
+using namespace std;
+
+// Classe Node que representa um nó em uma árvore binária
+class Node {
+public:
+    // Construtor para inicializar o nó com uma chave e dado
+    Node(int key, char data)
+        : m_key(key), m_data(data), m_leftNode(nullptr), m_rightNode(nullptr) {}
+
+    // Funções de acesso para obter e configurar os filhos à esquerda e à direita
+    Node *leftNode() const { return m_leftNode; }
+    void setLeftNode(Node *node) { m_leftNode = node; }
+
+    Node *rightNode() const { return m_rightNode; }
+    void setRightNode(Node *node) { m_rightNode = node; }
+
+    // Funções para acessar a chave e o dado armazenado
+    int key() const { return m_key; }
+    char data() const { return m_data; }
+
+private:
+    int m_key;          // Chave do nó (usada na impressão)
+    char m_data;        // Dado associado ao nó (não usado na busca)
+    Node *m_leftNode;   // Ponteiro para o filho à esquerda
+    Node *m_rightNode;  // Ponteiro para o filho à direita
+};
+
+// Função que realiza a busca em profundidade (DFS) em ordem "inorder" (esquerda, raiz, direita)
+void printTreeDFSInorder(Node *node) {
+    // Caso base: se o nó atual for nulo, retornamos (fim da árvore)
+    if (node == nullptr) {
+        return;
+    }
+
+    // Primeiro, visitamos a subárvore à esquerda (recursão)
+    printTreeDFSInorder(node->leftNode());
+
+    // Depois, imprimimos a chave do nó atual
+    cout << node->key() << " ";
+
+    // Finalmente, visitamos a subárvore à direita (recursão)
+    printTreeDFSInorder(node->rightNode());
+}
+
+int main() {
+    // Criando nós da árvore
+    Node *n1 = new Node(1, 'a');
+    Node *n2 = new Node(2, 'b');
+    Node *n3 = new Node(3, 'c');
+    Node *n4 = new Node(4, 'd');
+    Node *n5 = new Node(5, 'e');
+    Node *n6 = new Node(6, 'f');
+
+    // Construindo a árvore
+    n1->setLeftNode(n2);  // n1 (raiz) tem n2 como filho esquerdo
+    n1->setRightNode(n3); // n1 (raiz) tem n3 como filho direito
+    n2->setLeftNode(n4);  // n2 tem n4 como filho esquerdo
+    n2->setRightNode(n5); // n2 tem n5 como filho direito
+    n3->setRightNode(n6); // n3 tem n6 como filho direito
+
+    // Imprimindo a árvore em ordem "inorder" usando DFS
+    cout << "Chaves da árvore em ordem (DFS inorder): ";
+    printTreeDFSInorder(n1);  // A partir da raiz (n1)
+    cout << endl;
+
+    // Liberando a memória alocada
+    delete n1;
+    delete n2;
+    delete n3;
+    delete n4;
+    delete n5;
+    delete n6;
+
+    return 0;
+}
