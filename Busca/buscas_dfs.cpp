@@ -57,78 +57,54 @@ public:
 };
 
 // DFS Pré-ordem (raiz-esquerda-direita)
-void printTreeDFSPreorder(Node *node) {
+void printArvoreDFSPreOrdem(Node *node) {
     // Caso base: se o nó atual é nulo, não há nada para fazer, então retorna
     if (node == NULL) {
         return;
     }
     
-    // 1. Imprime a chave do nó atual
+    // Imprime a chave do nó atual
     cout << node->key() << " ";
     
-    // 2. Recursivamente visita o nó à esquerda
-    printTreeDFSPreorder(node->leftNode());
+    // Recursivamente visita o nó à esquerda
+    printArvoreDFSPreOrdem(node->leftNode());
     
-    // 3. Recursivamente visita o nó à direita
-    printTreeDFSPreorder(node->rightNode());
+    // Recursivamente visita o nó à direita
+    printArvoreDFSPreOrdem(node->rightNode());
 }
 
-// Função que imprime a árvore em ordem "inorder" usando DFS (em ordem)
-void printTreeDFSInorder(Node *node) {
+// DFS Em Ordem (esquerda-raiz-direita)
+void printArvoreDFSEmOrdem(Node *node) {
     // Caso base: se o nó atual é nulo, não há nada para fazer, então retorna
     if (node == NULL) {
         return;
     }
     
     // 1. Recursivamente visita o nó à esquerda
-    printTreeDFSInorder(node->leftNode());
+    printArvoreDFSEmOrdem(node->leftNode());
     
     // 2. Imprime a chave do nó atual
     cout << node->key() << " ";
     
     // 3. Recursivamente visita o nó à direita
-    printTreeDFSInorder(node->rightNode());
+    printArvoreDFSEmOrdem(node->rightNode());
 }
 
-// Função que imprime a árvore em ordem "postorder" usando DFS (pós-ordem)
-void printTreeDFSPostorder(Node *node) {
+// DFS Pós Ordem (esquerda - direita - raiz)
+void printArvoreDFSPosOrdem(Node *node) {
     // Caso base: se o nó atual é nulo, não há nada para fazer, então retorna
     if (node == NULL) {
         return;
     }
     
-    // 1. Recursivamente visita o nó à esquerda
-    printTreeDFSPostorder(node->leftNode());
+    // Recursivamente visita o nó à esquerda
+    printArvoreDFSPosOrdem(node->leftNode());
     
-    // 2. Recursivamente visita o nó à direita
-    printTreeDFSPostorder(node->rightNode());
+    // Recursivamente visita o nó à direita
+    printArvoreDFSPosOrdem(node->rightNode());
     
-    // 3. Imprime a chave do nó atual
+    // Imprime a chave do nó atual
     cout << node->key() << " ";
-}
-
-// Função auxiliar para calcular a altura de um nó
-int nodeHeight(Node *node) {
-    if (node == NULL) {
-        return -1;
-    }
-    int leftHeight = nodeHeight(node->leftNode());
-    int rightHeight = nodeHeight(node->rightNode());
-    return max(leftHeight, rightHeight) + 1;
-}
-
-// Função que imprime um nível específico da árvore (para BFS)
-void printLevel(Node *node, int level) {
-    if (node == NULL) {
-        return;
-    }
-    if (level == 1) {
-        cout << node->key() << " ";
-    } else if (level > 1) {
-        printLevel(node->leftNode(), level - 1);
-        printLevel(node->rightNode(), level - 1);
-    }
-
 }
 
 int main() {
@@ -147,14 +123,19 @@ int main() {
     n2->setRightNode(n5); // n2 tem n5 como filho direito
     n3->setRightNode(n6); // n3 tem n6 como filho direito
 
-    // Imprimindo a árvore em ordem "inorder" usando DFS
-    cout << "Chaves da arvore em ordem (DFS inorder): ";
-    printTreeDFSInorder(n1);  // A partir da raiz (n1)
+    // Imprimindo a árvore em pré-ordem usando DFS
+    cout << "Chaves da arvore em DFS pré-ordem: ";
+    printArvoreDFSPreOrdem(n1);  // A partir da raiz (n1)
     cout << endl;
-
-    // Imprimindo a árvore em ordem "postorder" usando DFS
-    cout << "Chaves da arvore em pos-ordem (DFS postorder): ";
-    printTreeDFSPostorder(n1);  // A partir da raiz (n1)
+    
+    // Imprimindo a árvore em ordem usando DFS
+    cout << "Chaves da arvore em DFS ordem: ";
+    printArvoreDFSEmOrdem(n1);  // A partir da raiz (n1)
+    cout << endl;
+    
+    // Imprimindo a árvore em pós ordem usando DFS
+    cout << "Chaves da arvore em DFS pos ordem:";
+    printArvoreDFSPosOrdem(n1);  // A partir da raiz (n1)
     cout << endl;
 
     // Liberando a memória alocada
