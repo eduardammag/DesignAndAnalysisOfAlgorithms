@@ -126,6 +126,56 @@ Node *ArvoreBuscaPredecessor(Node *node) {
     return parentNode;
 }
 
+//Dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 crie um novo nó capaz de inserir  a chave mantendo as propriedades de BST.
+ Node * binaryTreeInsert(Node * root, int key) {
+ if (root == nullptr) {
+ return new Node(key);
+ }
+ if (key < root->key()) {
+ root->setLeftNode(binaryTreeInsert(root->leftNode(), key));
+ } else {
+ root->setRightNode(binaryTreeInsert(root->rightNode(), key));
+ }
+ return root;
+ }
+
+
+ //Dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 remova nó com esta chave mantendo as propriedades de BST.
+Node * binaryTreeDelete(Node * root, int key)
+ {
+ if (root == nullptr) {
+ return root;
+ }
+ if (key < root->key()) {
+ root->setLeftNode(binaryTreeDelete(root->leftNode(), key));
+ } else if (key > root->key()) {
+ root->setRightNode(binaryTreeDelete(root->rightNode(), key));
+ } else {
+ root = binaryTreeDeleteNode(root);
+ }
+ return root;
+ }
+
+ Node * binaryTreeDeleteNode(Node * root) {
+ if (root->leftNode() == nullptr && root->rightNode() == nullptr) {
+ delete root;
+ root = nullptr;
+ } else if (root->leftNode() == nullptr) {
+ Node * newRoot = root->rightNode();
+ delete root;
+ root = newRoot;
+ }
+ else if (root->rightNode() == nullptr) {
+ Node * newRoot = root->leftNode();
+ delete root;
+ root = newRoot;
+ } else {
+ Node * newRoot = binaryTreeSearchSuccessor(root->rightNode());
+ root->setKey(newRoot->key());
+ root->setRightNode(binaryTreeDelete(root->rightNode(), newRoot->key()));
+ }
+ return root;
+
 int main() {
     // Criando nós da árvore (com uma estrutura de árvore binária de busca)
     Node *n8 = new Node(8, 'h');   // Raiz
