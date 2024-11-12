@@ -108,7 +108,22 @@ Node *InsertArvoreBinaria(Node *root, int key) {
 //Aqui, a complexidade é ϴ(ℎ)
 
 
+
 //Dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 remova nó com esta chave mantendo as propriedades de BST.
+Node *DeleteArvoreBinaria(Node *root, int key) {
+    if (root == NULL) {
+        return root;
+    }
+    if (key < root->key()) {
+        root->setLeftNode(DeleteArvoreBinaria(root->leftNode(), key));
+    } else if (key > root->key()) {
+        root->setRightNode(DeleteArvoreBinaria(root->rightNode(), key));
+    } else {
+        root = DeleteNodeArvoreBinaria(root);
+    }
+    return root;
+}
+
 Node *DeleteNodeArvoreBinaria(Node *root) {
     if (root->leftNode() == NULL && root->rightNode() == NULL) {
         // Se o nó não tem filhos, simplesmente deletamos
@@ -134,20 +149,6 @@ Node *DeleteNodeArvoreBinaria(Node *root) {
 }
 //Aqui, a complexidade é ϴ(ℎ)
 
-
-Node *DeleteArvoreBinaria(Node *root, int key) {
-    if (root == NULL) {
-        return root;
-    }
-    if (key < root->key()) {
-        root->setLeftNode(DeleteArvoreBinaria(root->leftNode(), key));
-    } else if (key > root->key()) {
-        root->setRightNode(DeleteArvoreBinaria(root->rightNode(), key));
-    } else {
-        root = DeleteNodeArvoreBinaria(root);
-    }
-    return root;
-}
 
 
 
