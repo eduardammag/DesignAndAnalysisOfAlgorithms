@@ -36,14 +36,14 @@ public:
         return m_parentNode; 
         }
    
-    // Função que define o nó à esquerda e também define o nó atual como pai do nó à esquerda
+    // Função que define o nó à esquerda 
     void setLeftNode(Node *node) {
-        m_leftNode = node;        // Define o nó à esquerda
+        m_leftNode = node;        
     }
     
-    // Função que define o nó à direita e também define o nó atual como pai do nó à direita
+    // Função que define o nó à direita 
     void setRightNode(Node *node) {
-        m_rightNode = node;       // Define o nó à direita
+        m_rightNode = node;       
     }
       
     // Função que define o nó pai
