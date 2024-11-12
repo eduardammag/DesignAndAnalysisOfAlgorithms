@@ -88,7 +88,7 @@ void printTreeBFS(Node *root) {
     }
 }
 
-// Função que imprime a árvore usando BFS com uma fila (versão otimizada)
+// Função que imprime a árvore usando BFS com uma fila (versão otimizada) com complexidade ϴ(n)
 void printTreeBFSWithQueue(Node *root) {
     if (root == NULL) {
         return;
