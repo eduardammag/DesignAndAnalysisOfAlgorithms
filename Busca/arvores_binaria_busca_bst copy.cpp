@@ -1,5 +1,4 @@
 #include <iostream>
-#include <queue>  // Inclui a biblioteca de fila para BFS
 using namespace std;
 
 // Definição da classe Node que representa um nó em uma árvore binária
@@ -57,56 +56,80 @@ public:
     }
 };
 
-// Função auxiliar para calcular a altura de um nó
-int nodeHeight(Node *node) {
-    if (node == NULL) {
-        return -1;
-    }
-    int leftHeight = nodeHeight(node->leftNode());
-    int rightHeight = nodeHeight(node->rightNode());
-    return max(leftHeight, rightHeight) + 1;
-}
 
-// Função que imprime um nível específico da árvore (para BFS)
-void printLevel(Node *node, int level) {
-    if (node == NULL) {
-        return;
-    }
-    if (level == 1) {
-        cout << node->key() << " ";
-    } else if (level > 1) {
-        printLevel(node->leftNode(), level - 1);
-        printLevel(node->rightNode(), level - 1);
-    }
-}
 
-// Função que imprime a árvore usando BFS (busca em largura) com complexidade ϴ(n²)
-void printTreeBFS(Node *root) {
-    int depth = nodeHeight(root) + 1;
-    for (int i = 0; i < depth; i++) {
-        printLevel(root, i + 1);
-    }
-}
+ Exercício: dado um nó 𝑛1
+ de uma árvore binária de busca 𝐴 com altura ℎ encontre o 
+nó 𝑛2	
+cujo índice é o predecessor da sequência ordenada.
 
-// Função que imprime a árvore usando BFS com uma fila (versão otimizada) com complexidade ϴ(n)
-void printTreeBFSWithQueue(Node *root) {
-    if (root == NULL) {
-        return;
-    }
-    queue<Node*> queue;
-    queue.push(root);
-    while (!queue.empty()) {
-        Node *node = queue.front();
-        cout << node->key() << " ";
-        queue.pop();
-        if (node->leftNode()) {
-            queue.push(node->leftNode());
-        }
-        if (node->rightNode()) {
-            queue.push(node->rightNode());
-        }
-    }
-}
+ Node * binaryTreeSearchPredecessor(Node * node) {
+ if (node == nullptr) {
+ return node;
+ }
+ if (node->leftNode() != nullptr) {
+ return binaryTreeSearchMax(node->leftNode());
+ }
+ Node * parentNode = node->parentNode();
+ while (parentNode != nullptr && node == parentNode->leftNode()) {
+ node = parentNode;
+ parentNode = parentNode->parentNode();
+ }
+ return parentNode;
+
+  Exercício: dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 crie um 
+novo nó capaz de inserir
+ § Solução:
+ a chave mantendo as propriedades de BST.
+
+  Node * binaryTreeInsert(Node * root, int key) {
+ if (root == nullptr) {
+ return new Node(key);
+ }
+ if (key < root->key()) {
+ root->setLeftNode(binaryTreeInsert(root->leftNode(), key));
+ } else {
+ root->setRightNode(binaryTreeInsert(root->rightNode(), key));
+ }
+ return root;
+
+ Exercício: dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 remova
+ nó com esta chave mantendo as propriedades de BST.
+
+ Node * binaryTreeDelete(Node * root, int key)
+ {
+ if (root == nullptr) {
+ return root;
+ }
+ if (key < root->key()) {
+ root->setLeftNode(binaryTreeDelete(root->leftNode(), key));
+ } else if (key > root->key()) {
+ root->setRightNode(binaryTreeDelete(root->rightNode(), key));
+ } else {
+ root = binaryTreeDeleteNode(root);
+ }
+ return root;
+ }
+
+Node * binaryTreeDeleteNode(Node * root) {
+ if (root->leftNode() == nullptr && root->rightNode() == nullptr) {
+ delete root;
+ root = nullptr;
+ } else if (root->leftNode() == nullptr) {
+ Node * newRoot = root->rightNode();
+ delete root;
+ root = newRoot;
+ }
+ else if (root->rightNode() == nullptr) {
+ Node * newRoot = root->leftNode();
+ delete root;
+ root = newRoot;
+ } else {
+ Node * newRoot = binaryTreeSearchSuccessor(root->rightNode());
+ root->setKey(newRoot->key());
+ root->setRightNode(binaryTreeDelete(root->rightNode(), newRoot->key()));
+ }
+ return root;
 
 int main() {
     // Criando nós da árvore
@@ -124,15 +147,6 @@ int main() {
     n2->setRightNode(n5); // n2 tem n5 como filho direito
     n3->setRightNode(n6); // n3 tem n6 como filho direito
 
-    // Imprimindo a árvore usando BFS (busca em largura)
-    cout << "Chaves da árvore em ordem de nível (BFS): ";
-    printTreeBFS(n1);  // A partir da raiz (n1)
-    cout << endl;
-
-    // Imprimindo a árvore usando BFS com fila (otimizada)
-    cout << "Chaves da árvore em ordem de nível (BFS com fila): ";
-    printTreeBFSWithQueue(n1);  // A partir da raiz (n1)
-    cout << endl;
 
     // Liberando a memória alocada
     delete n1;

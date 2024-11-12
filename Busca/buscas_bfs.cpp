@@ -1,4 +1,5 @@
 #include <iostream>
+#include <queue>  // Inclui a biblioteca de fila para BFS
 using namespace std;
 
 // Definição da classe Node que representa um nó em uma árvore binária
@@ -56,57 +57,6 @@ public:
     }
 };
 
-// Função que imprime a árvore em ordem "preorder" usando DFS (pré-ordem)
-void printTreeDFSPreorder(Node *node) {
-    // Caso base: se o nó atual é nulo, não há nada para fazer, então retorna
-    if (node == NULL) {
-        return;
-    }
-    
-    // 1. Imprime a chave do nó atual
-    cout << node->key() << " ";
-    
-    // 2. Recursivamente visita o nó à esquerda
-    printTreeDFSPreorder(node->leftNode());
-    
-    // 3. Recursivamente visita o nó à direita
-    printTreeDFSPreorder(node->rightNode());
-}
-
-// Função que imprime a árvore em ordem "inorder" usando DFS (em ordem)
-void printTreeDFSInorder(Node *node) {
-    // Caso base: se o nó atual é nulo, não há nada para fazer, então retorna
-    if (node == NULL) {
-        return;
-    }
-    
-    // 1. Recursivamente visita o nó à esquerda
-    printTreeDFSInorder(node->leftNode());
-    
-    // 2. Imprime a chave do nó atual
-    cout << node->key() << " ";
-    
-    // 3. Recursivamente visita o nó à direita
-    printTreeDFSInorder(node->rightNode());
-}
-
-// Função que imprime a árvore em ordem "postorder" usando DFS (pós-ordem)
-void printTreeDFSPostorder(Node *node) {
-    // Caso base: se o nó atual é nulo, não há nada para fazer, então retorna
-    if (node == NULL) {
-        return;
-    }
-    
-    // 1. Recursivamente visita o nó à esquerda
-    printTreeDFSPostorder(node->leftNode());
-    
-    // 2. Recursivamente visita o nó à direita
-    printTreeDFSPostorder(node->rightNode());
-    
-    // 3. Imprime a chave do nó atual
-    cout << node->key() << " ";
-}
-
 // Função auxiliar para calcular a altura de um nó
 int nodeHeight(Node *node) {
     if (node == NULL) {
@@ -128,7 +78,34 @@ void printLevel(Node *node, int level) {
         printLevel(node->leftNode(), level - 1);
         printLevel(node->rightNode(), level - 1);
     }
+}
 
+// Função que imprime a árvore usando BFS (busca em largura) com complexidade ϴ(n²)
+void printTreeBFS(Node *root) {
+    int depth = nodeHeight(root) + 1;
+    for (int i = 0; i < depth; i++) {
+        printLevel(root, i + 1);
+    }
+}
+
+// Função que imprime a árvore usando BFS com uma fila (versão otimizada) com complexidade ϴ(n)
+void printTreeBFSWithQueue(Node *root) {
+    if (root == NULL) {
+        return;
+    }
+    queue<Node*> queue;
+    queue.push(root);
+    while (!queue.empty()) {
+        Node *node = queue.front();
+        cout << node->key() << " ";
+        queue.pop();
+        if (node->leftNode()) {
+            queue.push(node->leftNode());
+        }
+        if (node->rightNode()) {
+            queue.push(node->rightNode());
+        }
+    }
 }
 
 int main() {
@@ -147,14 +124,14 @@ int main() {
     n2->setRightNode(n5); // n2 tem n5 como filho direito
     n3->setRightNode(n6); // n3 tem n6 como filho direito
 
-    // Imprimindo a árvore em ordem "inorder" usando DFS
-    cout << "Chaves da arvore em ordem (DFS inorder): ";
-    printTreeDFSInorder(n1);  // A partir da raiz (n1)
+    // Imprimindo a árvore usando BFS (busca em largura)
+    cout << "Chaves da arvore em ordem de nivel (BFS): ";
+    printTreeBFS(n1);  // A partir da raiz (n1)
     cout << endl;
 
-    // Imprimindo a árvore em ordem "postorder" usando DFS
-    cout << "Chaves da arvore em pos-ordem (DFS postorder): ";
-    printTreeDFSPostorder(n1);  // A partir da raiz (n1)
+    // Imprimindo a árvore usando BFS com fila (otimizada)
+    cout << "Chaves da arvore em ordem de nivel (BFS com fila): ";
+    printTreeBFSWithQueue(n1);  // A partir da raiz (n1)
     cout << endl;
 
     // Liberando a memória alocada

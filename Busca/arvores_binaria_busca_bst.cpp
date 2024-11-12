@@ -56,80 +56,83 @@ public:
     }
 };
 
-// Função que imprime a árvore em ordem "preorder" usando DFS (pré-ordem)
-void printTreeDFSPreorder(Node *node) {
-    // Caso base: se o nó atual é nulo, não há nada para fazer, então retorna
-    if (node == NULL) {
-        return;
-    }
-    
-    // 1. Imprime a chave do nó atual
-    cout << node->key() << " ";
-    
-    // 2. Recursivamente visita o nó à esquerda
-    printTreeDFSPreorder(node->leftNode());
-    
-    // 3. Recursivamente visita o nó à direita
-    printTreeDFSPreorder(node->rightNode());
-}
 
-// Função que imprime a árvore em ordem "inorder" usando DFS (em ordem)
-void printTreeDFSInorder(Node *node) {
-    // Caso base: se o nó atual é nulo, não há nada para fazer, então retorna
-    if (node == NULL) {
-        return;
-    }
-    
-    // 1. Recursivamente visita o nó à esquerda
-    printTreeDFSInorder(node->leftNode());
-    
-    // 2. Imprime a chave do nó atual
-    cout << node->key() << " ";
-    
-    // 3. Recursivamente visita o nó à direita
-    printTreeDFSInorder(node->rightNode());
-}
 
-// Função que imprime a árvore em ordem "postorder" usando DFS (pós-ordem)
-void printTreeDFSPostorder(Node *node) {
-    // Caso base: se o nó atual é nulo, não há nada para fazer, então retorna
-    if (node == NULL) {
-        return;
-    }
-    
-    // 1. Recursivamente visita o nó à esquerda
-    printTreeDFSPostorder(node->leftNode());
-    
-    // 2. Recursivamente visita o nó à direita
-    printTreeDFSPostorder(node->rightNode());
-    
-    // 3. Imprime a chave do nó atual
-    cout << node->key() << " ";
-}
+// Problema: dada uma árvore binária de busca 𝐴 com altura ℎ encontre o nó cuja chave seja 𝑘.
 
-// Função auxiliar para calcular a altura de um nó
-int nodeHeight(Node *node) {
-    if (node == NULL) {
-        return -1;
-    }
-    int leftHeight = nodeHeight(node->leftNode());
-    int rightHeight = nodeHeight(node->rightNode());
-    return max(leftHeight, rightHeight) + 1;
-}
+ Node * binaryTreeSearchRecursive(Node * node, int key) {
+ if (node == nullptr || node->key() == key) {
+ return node;
+ }
+ if (node->key() > key) {
+ return binaryTreeSearchRecursive(node->leftNode(), key);
+ } else {
+ return binaryTreeSearchRecursive(node->rightNode(), key);
+ }
+ }
+ § Complexidade:	ϴ ℎ
 
-// Função que imprime um nível específico da árvore (para BFS)
-void printLevel(Node *node, int level) {
-    if (node == NULL) {
-        return;
-    }
-    if (level == 1) {
-        cout << node->key() << " ";
-    } else if (level > 1) {
-        printLevel(node->leftNode(), level - 1);
-        printLevel(node->rightNode(), level - 1);
-    }
+  Solução (iterativa):
+ Node * binaryTreeSearchIterative(Node * node, int key) {
+ while (node != nullptr && node->key() != key) {
+ if (node->key() > key) {
+ node = node->leftNode();
+ } else {
+ node = node->rightNode();
+ }
+ }
+ return node;
+ }
 
-}
+// Exercício: dada uma árvore binária de busca 𝐴 com altura ℎ encontre o índice do nó 
+com índice mínimo
+ 
+ Solução:
+ Node * binaryTreeSearchMin(Node * node) {
+ if (node == nullptr) {
+ return node;
+ }
+ while (node->leftNode() != nullptr) {
+ node = node->leftNode();
+ }
+ return node;
+ }
+ § Complexidade:	ϴ
+ ℎ
+
+
+//Exercício: dada uma árvore binária de busca 𝐴 com altura ℎ encontre o índice do nó 
+com índice máximo
+ .
+ Solução:
+ Node * binaryTreeSearchMax(Node * node) {
+ if (node == nullptr) {
+ return node;
+ }
+ while (node->rightNode() != nullptr) {
+ node = node->rightNode();
+ }
+ return node;
+ }
+ § Complexidade:	ϴ
+ ℎ
+
+
+//Exercício: dado um nó 𝑛1 de uma árvore binária de busca 𝐴 com altura ℎ encontre o nó 𝑛2	cujo índice é o sucessor da sequência ordenada.
+
+Node * binaryTreeSearchSuccessor(Node * node) {
+ if (node == nullptr) {
+ return node;
+ }
+ if (node->rightNode() != nullptr) {
+ return binaryTreeSearchMin(node->rightNode());
+ }
+ Node * parentNode = node->parentNode();
+ while (parentNode != nullptr && node == parentNode->rightNode()) {
+ node = parentNode;
+ parentNode = parentNode->parentNode();
+ }
+ return parentNode;
 
 int main() {
     // Criando nós da árvore
@@ -147,15 +150,6 @@ int main() {
     n2->setRightNode(n5); // n2 tem n5 como filho direito
     n3->setRightNode(n6); // n3 tem n6 como filho direito
 
-    // Imprimindo a árvore em ordem "inorder" usando DFS
-    cout << "Chaves da arvore em ordem (DFS inorder): ";
-    printTreeDFSInorder(n1);  // A partir da raiz (n1)
-    cout << endl;
-
-    // Imprimindo a árvore em ordem "postorder" usando DFS
-    cout << "Chaves da arvore em pos-ordem (DFS postorder): ";
-    printTreeDFSPostorder(n1);  // A partir da raiz (n1)
-    cout << endl;
 
     // Liberando a memória alocada
     delete n1;
