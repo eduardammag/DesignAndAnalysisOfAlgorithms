@@ -56,7 +56,7 @@ public:
     }
 };
 
-// Função que imprime a árvore em ordem "preorder" usando DFS (pré-ordem)
+// DFS Pré-ordem (raiz-esquerda-direita)
 void printTreeDFSPreorder(Node *node) {
     // Caso base: se o nó atual é nulo, não há nada para fazer, então retorna
     if (node == NULL) {

@@ -58,79 +58,131 @@ public:
 
 
 
- Exercício: dado um nó 𝑛1
- de uma árvore binária de busca 𝐴 com altura ℎ encontre o 
-nó 𝑛2	
-cujo índice é o predecessor da sequência ordenada.
+// Exercício 1: Dado um nó 𝑛1 de uma árvore binária de busca 𝐴 com altura ℎ, encontre o nó 𝑛2 cujo índice é o predecessor na sequência ordenada.
+Node *binaryTreeSearchPredecessor(Node *node) {
+    // Caso base: se o nó for nulo, retorna nulo
+    if (node == nullptr) {
+        return node;
+    }
 
- Node * binaryTreeSearchPredecessor(Node * node) {
- if (node == nullptr) {
- return node;
- }
- if (node->leftNode() != nullptr) {
- return binaryTreeSearchMax(node->leftNode());
- }
- Node * parentNode = node->parentNode();
- while (parentNode != nullptr && node == parentNode->leftNode()) {
- node = parentNode;
- parentNode = parentNode->parentNode();
- }
- return parentNode;
+    // Se o nó tem um filho à esquerda, o predecessor será o nó com o maior valor na subárvore esquerda
+    if (node->leftNode() != nullptr) {
+        return binaryTreeSearchMax(node->leftNode());
+    }
 
-  Exercício: dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 crie um 
-novo nó capaz de inserir
- § Solução:
- a chave mantendo as propriedades de BST.
+    // Caso contrário, o predecessor é o nó pai, mas apenas se o nó atual for o filho direito do pai
+    Node *parentNode = node->parentNode();
+    while (parentNode != nullptr && node == parentNode->leftNode()) {
+        node = parentNode;
+        parentNode = parentNode->parentNode();
+    }
 
-  Node * binaryTreeInsert(Node * root, int key) {
- if (root == nullptr) {
- return new Node(key);
- }
- if (key < root->key()) {
- root->setLeftNode(binaryTreeInsert(root->leftNode(), key));
- } else {
- root->setRightNode(binaryTreeInsert(root->rightNode(), key));
- }
- return root;
+    // Retorna o nó pai (predecessor na sequência ordenada)
+    return parentNode;
+}
 
- Exercício: dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 remova
- nó com esta chave mantendo as propriedades de BST.
+// Função auxiliar para encontrar o nó com o maior valor na subárvore esquerda
+Node *binaryTreeSearchMax(Node *node) {
+    while (node != nullptr && node->rightNode() != nullptr) {
+        node = node->rightNode();
+    }
+    return node;
+}
 
- Node * binaryTreeDelete(Node * root, int key)
- {
- if (root == nullptr) {
- return root;
- }
- if (key < root->key()) {
- root->setLeftNode(binaryTreeDelete(root->leftNode(), key));
- } else if (key > root->key()) {
- root->setRightNode(binaryTreeDelete(root->rightNode(), key));
- } else {
- root = binaryTreeDeleteNode(root);
- }
- return root;
- }
 
-Node * binaryTreeDeleteNode(Node * root) {
- if (root->leftNode() == nullptr && root->rightNode() == nullptr) {
- delete root;
- root = nullptr;
- } else if (root->leftNode() == nullptr) {
- Node * newRoot = root->rightNode();
- delete root;
- root = newRoot;
- }
- else if (root->rightNode() == nullptr) {
- Node * newRoot = root->leftNode();
- delete root;
- root = newRoot;
- } else {
- Node * newRoot = binaryTreeSearchSuccessor(root->rightNode());
- root->setKey(newRoot->key());
- root->setRightNode(binaryTreeDelete(root->rightNode(), newRoot->key()));
- }
- return root;
+// Exercício 2: Dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘, crie um novo nó capaz de inserir a chave mantendo as propriedades de BST.
+Node *binaryTreeInsert(Node *root, int key) {
+    // Caso base: se a árvore estiver vazia, cria um novo nó e retorna
+    if (root == nullptr) {
+        return new Node(key, ' ');  // ' ' é um valor genérico para o dado, pode ser alterado conforme necessário
+    }
 
+    // Se a chave for menor que a chave do nó, a inserção vai para a subárvore esquerda
+    if (key < root->key()) {
+        root->setLeftNode(binaryTreeInsert(root->leftNode(), key));
+    } else {
+        // Caso contrário, a inserção vai para a subárvore direita
+        root->setRightNode(binaryTreeInsert(root->rightNode(), key));
+    }
+
+    return root;
+}
+
+// Exercício 3: Dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘, remova o nó com esta chave mantendo as propriedades de BST.
+Node *binaryTreeDelete(Node *root, int key) {
+    // Caso base: se o nó for nulo, retorna nulo
+    if (root == nullptr) {
+        return root;
+    }
+
+    // Se a chave buscada for menor que a chave do nó, a remoção acontece na subárvore esquerda
+    if (key < root->key()) {
+        root->setLeftNode(binaryTreeDelete(root->leftNode(), key));
+    } else if (key > root->key()) {
+        // Se a chave buscada for maior que a chave do nó, a remoção acontece na subárvore direita
+        root->setRightNode(binaryTreeDelete(root->rightNode(), key));
+    } else {
+        // Caso o nó a ser removido tenha sido encontrado
+        root = binaryTreeDeleteNode(root);
+    }
+
+    return root;
+}
+
+// Função para remover um nó específico, mantendo as propriedades da árvore binária de busca
+Node *binaryTreeDeleteNode(Node *root) {
+    // Caso 1: O nó não tem filhos (é uma folha), simplesmente apaga o nó
+    if (root->leftNode() == nullptr && root->rightNode() == nullptr) {
+        delete root;
+        root = nullptr;
+    }
+    // Caso 2: O nó tem apenas o filho à direita
+    else if (root->leftNode() == nullptr) {
+        Node *newRoot = root->rightNode();
+        delete root;
+        root = newRoot;
+    }
+    // Caso 3: O nó tem apenas o filho à esquerda
+    else if (root->rightNode() == nullptr) {
+        Node *newRoot = root->leftNode();
+        delete root;
+        root = newRoot;
+    }
+    // Caso 4: O nó tem ambos os filhos (esquerdo e direito)
+    else {
+        // Encontra o sucessor (menor valor da subárvore direita) e substitui a chave do nó
+        Node *newRoot = binaryTreeSearchSuccessor(root->rightNode());
+        root->setKey(newRoot->key());
+        // Remove o nó sucessor da subárvore direita
+        root->setRightNode(binaryTreeDelete(root->rightNode(), newRoot->key()));
+    }
+    return root;
+}
+
+// Função auxiliar para encontrar o sucessor de um nó
+Node *binaryTreeSearchSuccessor(Node *node) {
+    // Se o nó tem um filho à direita, o sucessor é o nó com o menor valor na subárvore direita
+    if (node->rightNode() != nullptr) {
+        return binaryTreeSearchMin(node->rightNode());
+    }
+
+    // Caso contrário, o sucessor é o nó pai, mas apenas se o nó atual for o filho esquerdo do pai
+    Node *parentNode = node->parentNode();
+    while (parentNode != nullptr && node == parentNode->rightNode()) {
+        node = parentNode;
+        parentNode = parentNode->parentNode();
+    }
+
+    return parentNode;
+}
+
+// Função auxiliar para encontrar o nó com o menor valor na subárvore esquerda
+Node *binaryTreeSearchMin(Node *node) {
+    while (node != nullptr && node->leftNode() != nullptr) {
+        node = node->leftNode();
+    }
+    return node;
+}
 int main() {
     // Criando nós da árvore
     Node *n1 = new Node(1, 'a');
