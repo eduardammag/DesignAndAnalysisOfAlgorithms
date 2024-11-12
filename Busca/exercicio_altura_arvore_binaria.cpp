@@ -1,36 +1,61 @@
 #include <iostream>
 using namespace std;
 
-// Classe Node que representa um nó em uma árvore binária
+// Definição da classe Node que representa um nó em uma árvore binária
 class Node {
-public:
-    // Construtor que inicializa um nó com uma chave (int) e um dado (char)
-    Node(int key, char data)
-        : m_key(key), m_data(data), m_leftNode(nullptr), m_rightNode(nullptr), m_parentNode(nullptr) {}
-
-    // Função que retorna o ponteiro para o nó à esquerda
-    Node *leftNode() const { return m_leftNode; }
-
-    // Função que define o nó à esquerda
-    void setLeftNode(Node *node) { m_leftNode = node; }
-
-    // Função que retorna o ponteiro para o nó à direita
-    Node *rightNode() const { return m_rightNode; }
-
-    // Função que define o nó à direita
-    void setRightNode(Node *node) { m_rightNode = node; }
 
 private:
-    int m_key;          // Chave do nó
-    char m_data;        // Dado armazenado no nó
-    Node *m_leftNode;   // Ponteiro para o filho à esquerda
-    Node *m_rightNode;  // Ponteiro para o filho à direita
-    Node *m_parentNode; // Ponteiro para o nó pai (não utilizado aqui)
+    int m_key;              // Chave única do nó (geralmente usada para ordenação ou identificação)
+    char m_data;            // Dado armazenado no nó (pode ser qualquer tipo, aqui é um char)
+    Node *m_leftNode;       // Ponteiro para o nó à esquerda (filho esquerdo)
+    Node *m_rightNode;      // Ponteiro para o nó à direita (filho direito)
+    Node *m_parentNode;     // Ponteiro para o nó pai    
+
+public:
+    // Construtor da classe Node, inicializa os membros com os valores fornecidos
+    Node(int key, char data) : 
+        m_key(key),                // Inicializa a chave do nó com o valor passado (key)
+        m_data(data),              // Inicializa o dado armazenado no nó com o valor passado (data)
+        m_leftNode(NULL),          // Inicializa o ponteiro para o filho esquerdo como NULL
+        m_rightNode(NULL),         // Inicializa o ponteiro para o filho direito como NULL
+        m_parentNode(NULL) {}      // Inicializa o ponteiro para o nó pai como NULL
+    
+    // Função que retorna o ponteiro para o nó à esquerda
+    Node *leftNode() const{ 
+        return m_leftNode; 
+        } 
+
+    // Função que retorna o ponteiro para o nó à direita
+    Node *rightNode() const{
+        return m_rightNode; 
+        }     
+    
+    // Função que retorna o ponteiro para o nó pai
+    Node *parentNode() const{
+        return m_parentNode; 
+        }
+   
+    // Função que define o nó à esquerda e também define o nó atual como pai do nó à esquerda
+    void setLeftNode(Node *node) {
+        m_leftNode = node;        // Define o nó à esquerda
+    }
+    
+    // Função que define o nó à direita e também define o nó atual como pai do nó à direita
+    void setRightNode(Node *node) {
+        m_rightNode = node;       // Define o nó à direita
+    }
+      
+    // Função que define o nó pai
+    void setParentNode(Node *node){ 
+        m_parentNode = node; 
+        }
 };
+
+
 
 // Função para calcular a altura de um nó na árvore binária
 int nodeHeight(Node *node) {
-    if (node == nullptr) {
+    if (node == NULL) {
         return -1; // Altura de árvore vazia é -1
     }
     
@@ -39,7 +64,12 @@ int nodeHeight(Node *node) {
     int rightHeight = nodeHeight(node->rightNode());
 
     // Retorna a maior altura entre as subárvores mais 1 (para contar o nó atual)
-    return (leftHeight > rightHeight ? rightHeight : leftHeight) + 1;
+    if (leftHeight > rightHeight) {
+        return leftHeight + 1;
+    } else {
+        return rightHeight + 1;
+    }
+
 }
 
 int main() {
@@ -60,7 +90,7 @@ int main() {
 
     // Teste: Altura da árvore
     int height = nodeHeight(n1);
-    cout << "A altura da árvore binária é: " << height << endl;
+    cout << "Altura da arvore binaria: " << height << endl;
 
     // Liberação da memória
     delete n1;
