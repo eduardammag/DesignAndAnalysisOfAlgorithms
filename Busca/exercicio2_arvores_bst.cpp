@@ -126,58 +126,9 @@ Node *ArvoreBuscaPredecessor(Node *node) {
     return parentNode;
 }
 
-//Dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 crie um novo nó capaz de inserir  a chave mantendo as propriedades de BST.
- Node * binaryTreeInsert(Node * root, int key) {
- if (root == nullptr) {
- return new Node(key);
- }
- if (key < root->key()) {
- root->setLeftNode(binaryTreeInsert(root->leftNode(), key));
- } else {
- root->setRightNode(binaryTreeInsert(root->rightNode(), key));
- }
- return root;
- }
-
-
- //Dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 remova nó com esta chave mantendo as propriedades de BST.
-Node * binaryTreeDelete(Node * root, int key)
- {
- if (root == nullptr) {
- return root;
- }
- if (key < root->key()) {
- root->setLeftNode(binaryTreeDelete(root->leftNode(), key));
- } else if (key > root->key()) {
- root->setRightNode(binaryTreeDelete(root->rightNode(), key));
- } else {
- root = binaryTreeDeleteNode(root);
- }
- return root;
- }
-
- Node * binaryTreeDeleteNode(Node * root) {
- if (root->leftNode() == nullptr && root->rightNode() == nullptr) {
- delete root;
- root = nullptr;
- } else if (root->leftNode() == nullptr) {
- Node * newRoot = root->rightNode();
- delete root;
- root = newRoot;
- }
- else if (root->rightNode() == nullptr) {
- Node * newRoot = root->leftNode();
- delete root;
- root = newRoot;
- } else {
- Node * newRoot = binaryTreeSearchSuccessor(root->rightNode());
- root->setKey(newRoot->key());
- root->setRightNode(binaryTreeDelete(root->rightNode(), newRoot->key()));
- }
- return root;
 
 int main() {
-    // Criando nós da árvore (com uma estrutura de árvore binária de busca)
+    // Criando nós da árvore
     Node *n8 = new Node(8, 'h');   // Raiz
     Node *n3 = new Node(3, 'c');   
     Node *n10 = new Node(10, 'j');
@@ -188,15 +139,15 @@ int main() {
     Node *n7 = new Node(7, 'g');
     Node *n13 = new Node(13, 'm');
 
-    // Construindo a árvore binária de busca corretamente
-    n8->setLeftNode(n3);  // n8 (raiz) tem n3 como filho esquerdo
-    n8->setRightNode(n10); // n8 tem n10 como filho direito
-    n3->setLeftNode(n1);  // n3 tem n1 como filho esquerdo
-    n3->setRightNode(n6); // n3 tem n6 como filho direito
-    n6->setLeftNode(n4);  // n6 tem n4 como filho esquerdo
-    n6->setRightNode(n7); // n6 tem n7 como filho direito
-    n10->setRightNode(n14); // n10 tem n14 como filho direito
-    n14->setLeftNode(n13);  // n14 tem n13 como filho esquerdo
+    // Construindo a árvore binária de busca
+    n8->setLeftNode(n3);  
+    n8->setRightNode(n10);
+    n3->setLeftNode(n1);  
+    n3->setRightNode(n6);
+    n6->setLeftNode(n4);  
+    n6->setRightNode(n7); 
+    n10->setRightNode(n14);
+    n14->setLeftNode(n13);
 
     // Testando a função que encontra o nó com a chave mínima
     Node *minNode = BuscaIndiceMin(n8);
@@ -229,7 +180,6 @@ int main() {
     } else {
         cout << "Predecessor de " << n6->key() << " nao encontrado!" << endl;
     }
-
 
     // Liberando a memória alocada
     delete n8;
