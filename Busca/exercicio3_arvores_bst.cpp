@@ -56,38 +56,6 @@ public:
     }
 };
 
-//Dada uma árvore binária de busca 𝐴 com altura ℎ encontre o índice do nó com índice mínimo
-Node *BuscaIndiceMin(Node *node) {
-    // Se a árvore está vazia (nó nulo), retorna NULL
-    if (node == NULL) {
-        return node;
-    }
-    // Caminha para o nó mais à esquerda da árvore
-    while (node->leftNode() != NULL) {
-        node = node->leftNode();
-    }
-    // Retorna o nó com a chave mínima
-    return node;
-}
-
-//Dada uma árvore binária de busca 𝐴 com altura ℎ encontre o índice do nó com índice máximo
-Node *BuscaIndiceMax(Node *node) {
-    // Se a árvore está vazia (nó nulo), retorna NULL
-    if (node == NULL) {
-        return node;
-    }
-    // Caminha para o nó mais à direita da árvore
-    while (node->rightNode() != NULL) {
-        node = node->rightNode();
-    }
-    // Retorna o nó com a chave máxima
-    return node;
-}
-
-
-//Dado um nó 𝑛1  de uma árvore binária de busca 𝐴 com altura ℎ encontre o nó 𝑛2	cujo índice é o sucessor da sequência ordenada.
-
-// Função que encontra o sucessor de um nó em uma árvore binária de busca (BST)
 Node *ArvoreBuscaSucessor(Node *node) {
     if (node == NULL) {
         return node;
@@ -106,25 +74,62 @@ Node *ArvoreBuscaSucessor(Node *node) {
     return parentNode;
 }
 
-//Dado um nó 𝑛1  de uma árvore binária de busca 𝐴 com altura ℎ encontre o nó 𝑛2 cujo índice é o predecessor da sequência ordenada.
-Node *ArvoreBuscaPredecessor(Node *node) {
-    // Se o nó for nulo, retorna NULL (caso base)
-    if (node == NULL) {
-        return node;
+//Dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 crie um novo nó capaz de inserir  a chave mantendo as propriedades de BST.
+Node *InsertArvoreBinaria(Node * root, int key){
+    if (root == NULL){
+        return new Node(key);
     }
-    // Se o nó tem filho à esquerda, o predecessor é o nó com a chave máxima na subárvore esquerda
-    if (node->leftNode() != NULL) {
-        return BuscaIndiceMax(node->leftNode());
+    if (key < root -> key()){
+        root -> setLeftNode(InsertArvoreBinaria(root -> leftNode(), key));
+    } else{
+        root -> setRightNode(InsertArvoreBinaria(root->rightNode(), key));
     }
-    // Caso contrário, precisamos subir pela árvore até encontrar um nó que seja filho direito de seu pai
-    Node *parentNode = node->parentNode();
-    while (parentNode != NULL && node == parentNode->leftNode()) {
-        node = parentNode;
-        parentNode = parentNode->parentNode();
-    }
-    // Retorna o predecessor (ou NULL se não houver predecessor)
-    return parentNode;
+    return root;
 }
+//Aqui, a complexidade é ϴ(ℎ)
+
+
+//Dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 remova nó com esta chave mantendo as propriedades de BST.
+Node * DeleteArvoreBinaria(Node * root, int key){
+    if (root == NULL){
+        return root;
+    }
+    if (key < root -> key()){
+        root -> setLeftNode(DeleteArvoreBinaria(root ->leftNode(), key));
+    } else if(key > root ->key()){
+        root -> setRightNode(DeleteArvoreBinaria(root->rightNode(), key));
+    } else {
+        root = DeleteArvoreBinaria(root);
+    }
+    return root;
+}
+
+Node *DeleteNodeArvoreBinaria(Node * root){
+    if (root -> leftNode() == NULL && root -> rightNode() == NULL){
+        delete root;
+        root = NULL;
+    } else if (root ->leftNode() == NULL) {
+        Node * newRoot = root ->rightNode();
+        delete root;
+        root = newRoot;
+    } else if (root -> rightNode() == NULL){
+        Node* newRoot = root -> leftNode();
+        delete root;
+        root=newRoot;
+    } else {
+        Node* newRoot = ArvoreBuscaSucessor(root->rightNode());
+        root -> key(newRoot->key());
+        root -> setRightNode(DeleteArvoreBinaria(root->rightNode(), newRoot -> key()));
+    }
+    return root;
+}
+
+//Aqui, a complexidade é ϴ(ℎ)
+
+
+
+
+
 
 int main() {
     // Criando nós da árvore (com uma estrutura de árvore binária de busca)
@@ -148,37 +153,8 @@ int main() {
     n10->setRightNode(n14); // n10 tem n14 como filho direito
     n14->setLeftNode(n13);  // n14 tem n13 como filho esquerdo
 
-    // Testando a função que encontra o nó com a chave mínima
-    Node *minNode = BuscaIndiceMin(n8);
-    if (minNode != NULL) {
-        cout << "No com a chave minima: " << minNode->key() << endl;
-    } else {
-        cout << "Arvore esta vazia!" << endl;
-    }
+  
 
-    // Testando a função que encontra o nó com a chave máxima
-    Node *maxNode = BuscaIndiceMax(n8);
-    if (maxNode != NULL) {
-        cout << "No com a chave maxima: " << maxNode->key() << endl;
-    } else {
-        cout << "Arvore esta vazia!" << endl;
-    }
-
-    // Testando a busca pelo sucessor
-    Node *sucessor = ArvoreBuscaSucessor(n6); // Sucessor de 6
-    if (sucessor != NULL) {
-        cout << "Sucessor de " << n6->key() << ": " << sucessor->key() << endl;
-    } else {
-        cout << "Sucessor de " << n6->key() << " nao encontrado!" << endl;
-    }
-
-    // Testando a busca pelo predecessor
-    Node *predecessor = ArvoreBuscaPredecessor(n6); // Predecessor de 6
-    if (predecessor != NULL) {
-        cout << "Predecessor de " << n6->key() << ": " << predecessor->key() << endl;
-    } else {
-        cout << "Predecessor de " << n6->key() << " nao encontrado!" << endl;
-    }
 
 
     // Liberando a memória alocada
