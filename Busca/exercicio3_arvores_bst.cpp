@@ -54,7 +54,26 @@ public:
     int key() const {
         return m_key;
     }
+    
+    // Função que define a chave do nó
+    void setKey(int key) {
+    m_key = key;
+}
+
 };
+
+Node *BuscaIndiceMin(Node *node) {
+    // Se a árvore está vazia (nó nulo), retorna NULL
+    if (node == NULL) {
+        return node;
+    }
+    // Caminha para o nó mais à esquerda da árvore
+    while (node->leftNode() != NULL) {
+        node = node->leftNode();
+    }
+    // Retorna o nó com a chave mínima
+    return node;
+}
 
 Node *ArvoreBuscaSucessor(Node *node) {
     if (node == NULL) {
@@ -75,14 +94,14 @@ Node *ArvoreBuscaSucessor(Node *node) {
 }
 
 //Dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 crie um novo nó capaz de inserir  a chave mantendo as propriedades de BST.
-Node *InsertArvoreBinaria(Node * root, int key){
-    if (root == NULL){
-        return new Node(key);
+Node *InsertArvoreBinaria(Node *root, int key) {
+    if (root == NULL) {
+        return new Node(key, 'A');  // Passando um valor padrão 'A' como dado
     }
-    if (key < root -> key()){
-        root -> setLeftNode(InsertArvoreBinaria(root -> leftNode(), key));
-    } else{
-        root -> setRightNode(InsertArvoreBinaria(root->rightNode(), key));
+    if (key < root->key()) {
+        root->setLeftNode(InsertArvoreBinaria(root->leftNode(), key));
+    } else {
+        root->setRightNode(InsertArvoreBinaria(root->rightNode(), key));
     }
     return root;
 }
@@ -90,42 +109,45 @@ Node *InsertArvoreBinaria(Node * root, int key){
 
 
 //Dada uma árvore binária de busca 𝐴 com altura ℎ e uma chave 𝑘 remova nó com esta chave mantendo as propriedades de BST.
-Node * DeleteArvoreBinaria(Node * root, int key){
-    if (root == NULL){
-        return root;
-    }
-    if (key < root -> key()){
-        root -> setLeftNode(DeleteArvoreBinaria(root ->leftNode(), key));
-    } else if(key > root ->key()){
-        root -> setRightNode(DeleteArvoreBinaria(root->rightNode(), key));
-    } else {
-        root = DeleteArvoreBinaria(root);
-    }
-    return root;
-}
-
-Node *DeleteNodeArvoreBinaria(Node * root){
-    if (root -> leftNode() == NULL && root -> rightNode() == NULL){
+Node *DeleteNodeArvoreBinaria(Node *root) {
+    if (root->leftNode() == NULL && root->rightNode() == NULL) {
+        // Se o nó não tem filhos, simplesmente deletamos
         delete root;
         root = NULL;
-    } else if (root ->leftNode() == NULL) {
-        Node * newRoot = root ->rightNode();
+    } else if (root->leftNode() == NULL) {
+        // Se só tem filho à direita, o nó à direita se torna o novo nó
+        Node *newRoot = root->rightNode();
         delete root;
         root = newRoot;
-    } else if (root -> rightNode() == NULL){
-        Node* newRoot = root -> leftNode();
+    } else if (root->rightNode() == NULL) {
+        // Se só tem filho à esquerda, o nó à esquerda se torna o novo nó
+        Node *newRoot = root->leftNode();
         delete root;
-        root=newRoot;
+        root = newRoot;
     } else {
-        Node* newRoot = ArvoreBuscaSucessor(root->rightNode());
-        root -> key(newRoot->key());
-        root -> setRightNode(DeleteArvoreBinaria(root->rightNode(), newRoot -> key()));
+        // Se o nó tem dois filhos, encontramos o sucessor e substituímos a chave
+        Node *newRoot = ArvoreBuscaSucessor(root->rightNode());
+        root->setKey(newRoot->key());  // Usamos a função setter aqui para definir a nova chave
+        root->setRightNode(DeleteArvoreBinaria(root->rightNode(), newRoot->key()));
     }
     return root;
 }
-
 //Aqui, a complexidade é ϴ(ℎ)
 
+
+Node *DeleteArvoreBinaria(Node *root, int key) {
+    if (root == NULL) {
+        return root;
+    }
+    if (key < root->key()) {
+        root->setLeftNode(DeleteArvoreBinaria(root->leftNode(), key));
+    } else if (key > root->key()) {
+        root->setRightNode(DeleteArvoreBinaria(root->rightNode(), key));
+    } else {
+        root = DeleteNodeArvoreBinaria(root);
+    }
+    return root;
+}
 
 
 
