@@ -1,91 +1,91 @@
 //Implemente uma classe para representar um grafo utilizando matriz de adjacências
-
 #include <iostream> 
 using namespace std;
 
-// Define o tipo de dado para representar um vértice
-typedef int vertex;
+// Define um tipo `vertex` como sinônimo de `int`
+typedef int vertex; 
 
-// Classe para representar o grafo com matriz de adjacência
+// Declaração da classe GraphMatrix para representar um grafo com matriz de adjacência
 class GraphMatrix {
 private:
-    int m_numVertices;           // Número de vértices no grafo
-    int m_numEdges;              // Número de arestas no grafo
-    bool** m_edges;              // Ponteiro para a matriz de adjacência
+    int m_numVertices; // Número de vértices no grafo
+    int m_numEdges;    // Número de arestas no grafo
+    bool** m_edges;    // Ponteiro duplo para representar a matriz de adjacência
 
 public:
-    // Construtor: inicializa a matriz de adjacência
+    // Construtor que inicializa o grafo com um número específico de vértices
     GraphMatrix(int numVertices)
-        : m_numVertices(numVertices), m_numEdges(0) {
-        // Aloca memória para a matriz de adjacência
-        m_edges = new bool*[m_numVertices];
-        for (vertex i = 0; i < m_numVertices; i++) {
-            m_edges[i] = new bool[m_numVertices];
-            // Inicializa todos os elementos da matriz como "false" (sem aresta)
-            for (vertex j = 0; j < m_numVertices; j++) {
-                m_edges[i][j] = false;
+        : m_numVertices(numVertices), m_numEdges(0) { // Inicializa número de vértices e arestas
+        m_edges = new bool*[m_numVertices]; // Aloca um array de ponteiros para as linhas da matriz
+        for (vertex i = 0; i < m_numVertices; i++) { // Para cada linha da matriz:
+            m_edges[i] = new bool[m_numVertices]; // Aloca um array de booleanos
+            for (vertex j = 0; j < m_numVertices; j++) { // Inicializa cada célula da matriz
+                m_edges[i][j] = false; // Define que inicialmente não há arestas
             }
         }
     }
 
-    // Destrutor: libera a memória alocada para a matriz de adjacência
-    ~GraphMatrix() {
-        for (int i = 0; i < m_numVertices; i++) {
-            delete[] m_edges[i]; // Libera memória de cada linha
-        }
-        delete[] m_edges; // Libera o ponteiro principal
-    }
-
-    // Verifica se existe uma aresta entre dois vértices
+    // Verifica se existe uma aresta entre dois vértices (consulta apenas)
     bool hasEdge(vertex v1, vertex v2) const {
-        return m_edges[v1][v2]; // Retorna o valor da matriz na posição (v1, v2)
+        return m_edges[v1][v2]; // Retorna o valor na matriz de adjacência
     }
 
     // Adiciona uma aresta entre dois vértices
     void addEdge(vertex v1, vertex v2) {
-        if (!hasEdge(v1, v2)) { // Apenas adiciona se a aresta não existir
-            m_edges[v1][v2] = true; // Marca a aresta como existente
-            m_numEdges++; // Incrementa o número de arestas
+        if (!hasEdge(v1, v2)) {       // Verifica se a aresta já não existe
+            m_edges[v1][v2] = true;  // Marca a célula correspondente como verdadeira
+            m_numEdges++;            // Incrementa o contador de arestas
         }
     }
 
-    // Remove a aresta entre dois vértices
+    // Remove uma aresta entre dois vértices
     void removeEdge(vertex v1, vertex v2) {
-        if (hasEdge(v1, v2)) { // Apenas remove se a aresta existir
-            m_edges[v1][v2] = false; // Marca a aresta como inexistente
-            m_numEdges--; // Decrementa o número de arestas
+        if (hasEdge(v1, v2)) {       // Verifica se a aresta existe
+            m_edges[v1][v2] = false; // Marca a célula correspondente como falsa
+            m_numEdges--;            // Decrementa o contador de arestas
         }
     }
 
-    // Imprime todas as arestas do grafo no formato "(v1, v2)"
+    // Imprime todas as arestas do grafo como pares de vértices
     void print() const {
-        for (vertex i = 0; i < m_numVertices; i++) {
-            for (vertex j = 0; j < m_numVertices; j++) {
-                if (hasEdge(i, j)) { // Se existir uma aresta, imprime
-                    cout << "(" << i << "," << j << ") ";
+        for (vertex i = 0; i < m_numVertices; i++) {      // Percorre todas as linhas
+            for (vertex j = 0; j < m_numVertices; j++) {  // Percorre todas as colunas
+                if (hasEdge(i, j)) {                      // Se há uma aresta
+                    cout << "(" << i << "," << j << ")";  // Imprime o par de vértices
                 }
             }
-            cout << endl; // Quebra de linha para cada vértice
+            cout << endl; // Quebra de linha após cada linha da matriz
         }
     }
 
     // Imprime a matriz de adjacência
     void printMatrix() const {
-        for (vertex i = 0; i < m_numVertices; i++) {
-            for (vertex j = 0; j < m_numVertices; j++) {
-                cout << m_edges[i][j] << " "; // Exibe o valor (0 ou 1)
+        for (vertex i = 0; i < m_numVertices; i++) {     // Percorre todas as linhas
+            for (vertex j = 0; j < m_numVertices; j++) { // Percorre todas as colunas
+                cout << m_edges[i][j] << " ";           // Imprime o valor da célula
             }
-            cout << endl; // Quebra de linha para a próxima linha da matriz
+            cout << endl; // Quebra de linha após cada linha da matriz
         }
+    }
+
+    // Destrutor que desaloca a matriz de adjacência
+    ~GraphMatrix() {
+        for (int i = 0; i < m_numVertices; i++) { // Para cada linha da matriz
+            delete[] m_edges[i]; // Libera a memória do array da linha
+        }
+        delete[] m_edges; // Libera o array de ponteiros
     }
 };
 
-// Função principal para demonstrar o uso da classe GraphMatrix
 int main() {
     GraphMatrix g1(6); // Cria um grafo com 6 vértices
 
-    // Adiciona as arestas ao grafo
+    // Imprime a matriz de adjacência inicial
+    g1.printMatrix();
+
+    // Adiciona várias arestas ao grafo
     g1.addEdge(0, 1);
+    g1.addEdge(0, 0);
     g1.addEdge(0, 2);
     g1.addEdge(1, 3);
     g1.addEdge(1, 4);
@@ -94,13 +94,11 @@ int main() {
     g1.addEdge(4, 5);
     g1.addEdge(4, 1);
 
-    // Imprime as arestas do grafo
-    cout << "Lista de Arestas:" << endl;
+    // Imprime as arestas na forma de pares de vértices
     g1.print();
 
-    // Imprime a matriz de adjacência
-    cout << "Matriz de Adjacência:" << endl;
+    // Imprime novamente a matriz de adjacência após as adições
     g1.printMatrix();
 
-    return 0;
+    return 0; // Finaliza o programa
 }
