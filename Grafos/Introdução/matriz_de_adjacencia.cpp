@@ -1,6 +1,6 @@
 //Implemente uma classe para representar um grafo utilizando matriz de adjacências
 
-#include <iostream> // Biblioteca padrão para entrada e saída
+#include <iostream> 
 using namespace std;
 
 // Define o tipo de dado para representar um vértice
