@@ -1,134 +1,146 @@
 // Implemente uma classe para representar um grafo utilizando lista de adjacências
-
-#include <iostream> // Biblioteca padrão para entrada e saída
+#include <iostream>
 using namespace std;
 
-// Define o tipo de dado para representar um vértice
+// Define o tipo "vertex" como um sinonimo para "int"
 typedef int vertex;
 
-// Classe para representar um nó na lista de adjacência
+// Classe que representa um nó da lista de adjacência (um destino para uma aresta).
 class EdgeNode {
+private:
+    vertex m_otherVertex; // O vértice de destino da aresta.
+    EdgeNode* m_next;     // Ponteiro para o próximo nó da lista (próxima aresta).
+
 public:
-    // Construtor: inicializa o vértice e o ponteiro para o próximo nó
+    // Construtor que inicializa o vértice de destino e o próximo nó.
     EdgeNode(vertex otherVertex, EdgeNode* next)
         : m_otherVertex(otherVertex), m_next(next) {}
 
-    // Retorna o vértice adjacente armazenado neste nó
+    // Retorna o vértice de destino da aresta.
     vertex otherVertex() const {
         return m_otherVertex;
     }
 
-    // Retorna o ponteiro para o próximo nó na lista
+    // Retorna o ponteiro para o próximo nó.
     EdgeNode* next() const {
         return m_next;
     }
 
-    // Define o próximo nó na lista
+    // Atualiza o ponteiro para o próximo nó.
     void setNext(EdgeNode* next) {
         m_next = next;
     }
-
-private:
-    vertex m_otherVertex;  // O vértice adjacente armazenado neste nó
-    EdgeNode* m_next;      // Ponteiro para o próximo nó na lista
 };
 
-// Classe para representar o grafo usando lista de adjacência
+// Classe que representa o grafo usando listas de adjacência.
 class GraphAdjList {
+private:
+    int m_numVertices;  // Número de vértices no grafo.
+    int m_numEdges;     // Número de arestas no grafo.
+    EdgeNode** m_edges; // Array de ponteiros para listas de adjacência.
+
 public:
-    // Construtor: inicializa o grafo com o número de vértices especificado
+    // Construtor que inicializa o grafo com um número fixo de vértices.
     GraphAdjList(int numVertices)
         : m_numVertices(numVertices), m_numEdges(0) {
-        // Aloca memória para o array de listas de adjacência
-        m_edges = new EdgeNode*[numVertices];
+        m_edges = new EdgeNode*[numVertices]; // Aloca espaço para as listas.
         for (vertex i = 0; i < numVertices; i++) {
-            m_edges[i] = nullptr; // Inicializa todas as listas como vazias
+            m_edges[i] = NULL; // Inicializa todas as listas como vazias.
         }
     }
 
-    // Destrutor: libera a memória alocada para as listas de adjacência
-    ~GraphAdjList() {
-        for (vertex i = 0; i < m_numVertices; i++) {
-            EdgeNode* edge = m_edges[i];
-            while (edge) {
-                EdgeNode* next = edge->next();
-                delete edge; // Libera o nó atual
-                edge = next; // Avança para o próximo nó
-            }
-        }
-        delete[] m_edges; // Libera o array de listas
-    }
-
-    // Adiciona uma aresta entre dois vértices
+    // Função para adicionar uma aresta entre v1 e v2.
     void addEdge(vertex v1, vertex v2) {
-        // Verifica se a aresta já existe
-        EdgeNode* edge = m_edges[v1];
+        EdgeNode* edge = m_edges[v1]; // Percorre a lista de adjacência de v1.
         while (edge) {
-            if (edge->otherVertex() == v2) { // Se a aresta já existir, retorna
+            if (edge->otherVertex() == v2) { // Se a aresta já existe, não faz nada.
                 return;
             }
             edge = edge->next();
         }
-        // Adiciona um novo nó na lista de adjacência do vértice v1
+        // Cria um novo nó no início da lista de adjacência de v1.
         m_edges[v1] = new EdgeNode(v2, m_edges[v1]);
-        m_numEdges++; // Incrementa o número de arestas
+        m_numEdges++; // Incrementa o contador de arestas.
     }
 
-    // Remove uma aresta entre dois vértices
+    // Função para remover uma aresta entre v1 e v2.
     void removeEdge(vertex v1, vertex v2) {
-        EdgeNode* edge = m_edges[v1];
-        EdgeNode* previousEdge = nullptr;
+        EdgeNode* edge = m_edges[v1];       // Ponteiro para percorrer a lista.
+        EdgeNode* previousEdge = NULL;     // Ponteiro para manter o nó anterior.
         while (edge) {
-            if (edge->otherVertex() == v2) { // Se encontrar a aresta
+            if (edge->otherVertex() == v2) { // Encontra a aresta.
                 if (previousEdge) {
-                    previousEdge->setNext(edge->next()); // Remove do meio
+                    // Se há um nó anterior, conecta o anterior ao próximo.
+                    previousEdge->setNext(edge->next());
                 } else {
-                    m_edges[v1] = edge->next(); // Remove do início
+                    // Se não há nó anterior, atualiza o início da lista.
+                    m_edges[v1] = edge->next();
                 }
-                delete edge; // Libera o nó da memória
-                m_numEdges--; // Decrementa o número de arestas
+                delete edge; // Libera a memória da aresta removida.
+                m_numEdges--; // Decrementa o contador de arestas.
                 return;
             }
-            previousEdge = edge;
-            edge = edge->next();
+            previousEdge = edge;  // Atualiza o nó anterior.
+            edge = edge->next();  // Avança para o próximo nó.
         }
     }
 
-    // Imprime todas as arestas do grafo no formato "(v1, v2)"
+    // Função para imprimir as arestas do grafo.
     void print() const {
         for (vertex i = 0; i < m_numVertices; i++) {
             EdgeNode* edge = m_edges[i];
             while (edge) {
                 cout << "(" << i << "," << edge->otherVertex() << ") ";
-                edge = edge->next(); // Avança para o próximo nó
+                edge = edge->next(); // Avança para o próximo nó.
             }
-            cout << endl; // Quebra de linha para cada vértice
         }
+        cout << endl;
     }
 
-private:
-    int m_numVertices;     // Número de vértices no grafo
-    int m_numEdges;        // Número de arestas no grafo
-    EdgeNode** m_edges;    // Array de listas de adjacência
+    // Destrutor que libera toda a memória alocada.
+    ~GraphAdjList() {
+        for (vertex i = 0; i < m_numVertices; i++) {
+            EdgeNode* edge = m_edges[i];
+            while (edge) {
+                EdgeNode* next = edge->next();
+                delete edge; // Libera cada nó da lista de adjacência.
+                edge = next;
+            }
+        }
+        delete[] m_edges; // Libera o array de listas de adjacência.
+    }
 };
 
-// Função principal para demonstrar o uso da classe GraphAdjList
 int main() {
-    GraphAdjList g2(6); // Cria um grafo com 6 vértices
+    GraphAdjList g(6); // Cria um grafo com 6 vértices.
 
-    // Adiciona as arestas ao grafo
-    g2.addEdge(0, 1);
-    g2.addEdge(0, 2);
-    g2.addEdge(1, 3);
-    g2.addEdge(1, 4);
-    g2.addEdge(2, 4);
-    g2.addEdge(3, 4);
-    g2.addEdge(4, 5);
-    g2.addEdge(4, 1);
+    // Adiciona algumas arestas ao grafo.
+    g.addEdge(0, 1);
+    g.addEdge(0, 2);
+    g.addEdge(1, 3);
+    g.addEdge(1, 4);
+    g.addEdge(2, 4);
+    g.addEdge(3, 4);
+    g.addEdge(4, 5);
+    g.addEdge(4, 1);
 
-    // Imprime as arestas do grafo
-    cout << "Lista de Arestas:" << endl;
-    g2.print();
+    // Exibe todas as arestas do grafo.
+    cout << "Lista de arestas antes de remover alguma aresta:" << endl;
+    g.print();
+
+    // Remove uma aresta.
+    g.removeEdge(4, 1);
+
+    // Exibe todas as arestas novamente.
+    cout << "Lista de arestas após remover a aresta (4,1):" << endl;
+    g.print();
+
+    // Remove outra aresta.
+    g.removeEdge(1, 3);
+
+    // Exibe as arestas novamente.
+    cout << "Lista de arestas após remover a aresta (1,3):" << endl;
+    g.print();
 
     return 0;
 }
