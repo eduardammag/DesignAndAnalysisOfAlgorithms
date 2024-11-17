@@ -1,93 +1,266 @@
 //Dados dois grafos 𝐺 = (𝑉,𝐸) e 𝐻 = (𝑉’,𝐸’) com 𝑉 = 𝑉’, crie um algoritmo que verifica se 𝐻 é subgrafo de 𝐺.
 
-// Função para verificar se um grafo H é subgrafo de G usando matriz de adjacência
-bool isSubGraph(GraphMatrix &h) {
-    // Obtém a matriz de adjacência de H
-    bool **hEdges = h.edges();
+//Usar o símbolo & em um parâmetro de uma função faz com que a função não receba uma cópia do objeto GraphMatrix como argumento, 
+//mas sim uma referência ao objeto original. Isso significa que qualquer modificação feita no objeto h dentro da função afetará o objeto original, 
+//pois ambos se referem ao mesmo dado na memória.
 
-    // Percorre todos os pares de vértices
-    for (vertex i = 0; i < m_numVertices; i++) {
-        for (vertex j = 0; j < m_numVertices; j++) {
-            // Se existe uma aresta em H, verifica se ela também existe em G
+#include <iostream>
+using namespace std;
+#include <unordered_set>
+#include <utility>
+#include <vector>
+
+typedef int vertex;
+
+class EdgeNode {
+private:
+    vertex m_otherVertex; // O vértice de destino da aresta.
+    EdgeNode* m_next;     // Ponteiro para o próximo nó da lista (próxima aresta).
+
+public:
+    EdgeNode(vertex otherVertex, EdgeNode* next)
+        : m_otherVertex(otherVertex), m_next(next) {}
+
+    vertex otherVertex() const {
+        return m_otherVertex;
+    }
+
+    EdgeNode* next() const {
+        return m_next;
+    }
+
+    void setNext(EdgeNode* next) {
+        m_next = next;
+    }
+};
+
+class GraphAdjList {
+private:
+    int m_numVertices;
+    int m_numEdges;
+    EdgeNode** m_edges;
+
+public:
+    GraphAdjList(int numVertices)
+        : m_numVertices(numVertices), m_numEdges(0) {
+        m_edges = new EdgeNode*[numVertices];
+        for (vertex i = 0; i < numVertices; i++) {
+            m_edges[i] = NULL;
+        }
+    }
+
+    void addEdge(vertex v1, vertex v2) {
+        EdgeNode* edge = m_edges[v1];
+        while (edge) {
+            if (edge->otherVertex() == v2) {
+                return;
+            }
+            edge = edge->next();
+        }
+        m_edges[v1] = new EdgeNode(v2, m_edges[v1]);
+        m_numEdges++;
+    }
+
+    void removeEdge(vertex v1, vertex v2) {
+        EdgeNode* edge = m_edges[v1];
+        EdgeNode* previousEdge = NULL;
+        while (edge) {
+            if (edge->otherVertex() == v2) {
+                if (previousEdge) {
+                    previousEdge->setNext(edge->next());
+                } else {
+                    m_edges[v1] = edge->next();
+                }
+                delete edge;
+                m_numEdges--;
+                return;
+            }
+            previousEdge = edge;
+            edge = edge->next();
+        }
+    }
+
+    void print() const {
+        for (vertex i = 0; i < m_numVertices; i++) {
+            EdgeNode* edge = m_edges[i];
+            while (edge) {
+                cout << "(" << i << "," << edge->otherVertex() << ") ";
+                edge = edge->next();
+            }
+        }
+        cout << endl;
+    }
+
+    EdgeNode** edges() const {
+        return m_edges;
+    }
+
+    int numVertices() const {
+        return m_numVertices;
+    }
+
+    ~GraphAdjList() {
+        for (vertex i = 0; i < m_numVertices; i++) {
+            EdgeNode* edge = m_edges[i];
+            while (edge) {
+                EdgeNode* next = edge->next();
+                delete edge;
+                edge = next;
+            }
+        }
+        delete[] m_edges;
+    }
+};
+
+class GraphMatrix {
+private:
+    int m_numVertices;
+    int m_numEdges;
+    bool** m_edges;
+
+public:
+    GraphMatrix(int numVertices)
+        : m_numVertices(numVertices), m_numEdges(0) {
+        m_edges = new bool*[m_numVertices];
+        for (vertex i = 0; i < m_numVertices; i++) {
+            m_edges[i] = new bool[m_numVertices];
+            for (vertex j = 0; j < m_numVertices; j++) {
+                m_edges[i][j] = false;
+            }
+        }
+    }
+
+    bool hasEdge(vertex v1, vertex v2) const {
+        return m_edges[v1][v2];
+    }
+
+    void addEdge(vertex v1, vertex v2) {
+        if (!hasEdge(v1, v2)) {
+            m_edges[v1][v2] = true;
+            m_numEdges++;
+        }
+    }
+
+    void removeEdge(vertex v1, vertex v2) {
+        if (hasEdge(v1, v2)) {
+            m_edges[v1][v2] = false;
+            m_numEdges--;
+        }
+    }
+
+    void print() const {
+        for (vertex i = 0; i < m_numVertices; i++) {
+            for (vertex j = 0; j < m_numVertices; j++) {
+                if (hasEdge(i, j)) {
+                    cout << "(" << i << "," << j << ") ";
+                }
+            }
+            cout << endl;
+        }
+    }
+
+    void printMatrix() const {
+        for (vertex i = 0; i < m_numVertices; i++) {
+            for (vertex j = 0; j < m_numVertices; j++) {
+                cout << m_edges[i][j] << " ";
+            }
+            cout << endl;
+        }
+    }
+
+    bool** edges() const {
+        return m_edges;
+    }
+
+    int numVertices() const {
+        return m_numVertices;
+    }
+
+    ~GraphMatrix() {
+        for (int i = 0; i < m_numVertices; i++) {
+            delete[] m_edges[i];
+        }
+        delete[] m_edges;
+    }
+};
+
+
+
+
+// Função para verificar se um grafo H é subgrafo de G usando matriz de adjacência
+bool isSubGraph(const GraphMatrix& G, const GraphMatrix& h) {
+    bool** gEdges = G.edges();
+    bool** hEdges = h.edges();
+
+    for (vertex i = 0; i < h.numVertices(); i++) {
+        for (vertex j = 0; j < h.numVertices(); j++) {
             if (hEdges[i][j]) {
-                if (!m_edges[i][j]) { // Se não existe em G
-                    return false;    // H não é subgrafo de G
+                if (!gEdges[i][j]) {
+                    return false;
                 }
             }
         }
     }
-    return true; // Todos os pares de arestas de H estão presentes em G
+    return true;
 }
 
 /* 
 Complexidade:
-- **Percorrer a matriz:** Há dois loops aninhados para percorrer todos os pares de vértices, o que resulta em uma complexidade de \( O(|V|^2) \).
-- **Verificação de aresta:** Cada verificação é \( O(1) \), pois estamos acessando diretamente uma célula da matriz.
-
-**Complexidade total:** \( O(|V|^2) \).
-
-Como \( H \) possui o mesmo conjunto de vértices que \( G \), a complexidade não depende diretamente do número de arestas, apenas do número de vértices \( |V| \).
-
-Observação: Este método é eficiente para grafos densos, mas pode ser menos eficiente para grafos esparsos devido ao alto custo em espaço e tempo das matrizes.
+- Há 2 loops aninhados para percorrer todos os pares de vértices, o que resulta em uma complexidade de (O(|V|^2)).
+- Cada verificação de aresta é (O(1)), pois estamos acessando diretamente uma célula da matriz.
+Como H possui o mesmo conjunto de vértices que G, a complexidade não depende diretamente do número de arestas, apenas do número de vértices.
+Obs:: Este método é eficiente para grafos densos, mas pode ser menos eficiente para grafos esparsos devido ao alto custo em espaço e tempo.
 */
 
 
 // Função para verificar se um grafo H é subgrafo de G usando lista de adjacência
-bool isSubGraph(GraphAdjList &h) {
-    // Obtém a lista de adjacência de H
-    EdgeNode **hEdges = h.edges();
+bool isSubGraph(const GraphAdjList& G, const GraphAdjList& h) {
+    EdgeNode** gEdges = G.edges();
+    EdgeNode** hEdges = h.edges();
 
-    // Percorre todos os vértices do grafo
-    for (vertex i = 0; i < m_numVertices; i++) {
-        EdgeNode *hEdge = hEdges[i]; // Lista de arestas de H para o vértice i
-
-        // Para cada aresta em H, verifica se ela também existe em G
+    for (vertex i = 0; i < h.numVertices(); i++) {
+        EdgeNode* hEdge = hEdges[i];
         while (hEdge) {
-            EdgeNode *gEdge = m_edges[i]; // Lista de arestas de G para o vértice i
+            EdgeNode* gEdge = gEdges[i];
             bool found = false;
-
-            // Percorre a lista de arestas de G para encontrar a aresta de H
             while (gEdge) {
                 if (hEdge->otherVertex() == gEdge->otherVertex()) {
-                    found = true; // Aresta encontrada em G
+                    found = true;
                     break;
                 }
                 gEdge = gEdge->next();
             }
-
-            // Se a aresta não foi encontrada em G, H não é subgrafo de G
             if (!found) {
                 return false;
             }
-
-            hEdge = hEdge->next(); // Próxima aresta de H
+            hEdge = hEdge->next();
         }
     }
-    return true; // Todas as arestas de H estão presentes em G
+    return true;
 }
 
 /* 
-Complexidade:
-- **Loop externo (vértices):** Percorre todos os \( |V| \) vértices.
-- **Loop interno (arestas de H):** Para cada vértice, percorre as arestas de H adjacentes a ele. Seja \( d_H(v) \) o grau do vértice em H.
-- **Loop mais interno (arestas de G):** Para cada aresta de H, percorre as arestas de G adjacentes ao mesmo vértice. Seja \( d_G(v) \) o grau do vértice em G.
+-Loop externo (vértices): Percorre todos os |V| vértices.
+-Loop interno (arestas de H): Para cada vértice, percorre as arestas de H adjacentes a ele. Seja d_H(v) o grau do vértice em H.
+-Loop mais interno (arestas de G): Para cada aresta de H, percorre as arestas de G adjacentes ao mesmo vértice. Seja d_G(v) o grau do vértice em G.
 
-**Complexidade total:** \( O(\sum_{v \in V} d_H(v) \cdot d_G(v)) \), que pode ser aproximada como \( O(|E_H| \cdot d_{G,\text{max}}) \), onde \( d_{G,\text{max}} \) é o maior grau em \( G \).
-
-Para grafos esparsos, onde \( |E_H| \ll |V|^2 \), este método pode ser mais eficiente que o método baseado em matriz.
-
-**Otimização possível:**
-- Usar um mapa ou conjunto para armazenar as arestas de G e verificar a existência de arestas em \( O(1) \) em vez de \( O(d_G(v)) \).
+-Complexidade total: O(∑_{v ∈ V} [d_H(v) · d_G(v)]),
+que pode ser aproximada como O(|E_H| · d_{G,max}), onde d_{G,max} é o maior grau de G.
+Isso significa que, para cada vértice em H, estamos verificando as arestas correspondentes em G,
+comparando os graus dos vértices em ambos os grafos. 
+O tempo de execução é proporcional ao número total de arestas em H multiplicado pelo maior grau de G.
+Para grafos esparsos, onde o número de arestas |E_H| é muito menor do que |V|^2, 
+este método baseado em listas pode ser mais eficiente do que o método baseado em matrizes,
+pois as listas de adjacência permitem um acesso mais eficiente às arestas,
+especialmente quando o grau de G é relativamente baixo.
+ 
+-Otimização possível: Usar um mapa ou conjunto para armazenar as arestas de G e verificar a existência de arestas em O(1) em vez de O(d_G(v)).
 */
-
-#include <unordered_set>
-#include <utility> // Para std::pair
-#include <vector>
 
 // Função para verificar se um grafo H é subgrafo de G usando lista de adjacência e otimização com conjuntos
 bool isSubGraphOptimized(GraphAdjList &h) {
     // Criar um conjunto para armazenar as arestas de G no formato (v1, v2)
-    std::unordered_set<std::pair<int, int>, pair_hash> gEdges;
+    unordered_set<pair<int, int>, pair_hash> gEdges;
 
     // Preencher o conjunto com as arestas de G
     for (vertex i = 0; i < m_numVertices; i++) {
@@ -136,3 +309,30 @@ Complexidade:
 
 Esta solução é eficiente para grafos esparsos, pois o custo é proporcional ao número de arestas em vez de \( O(|V|^2) \).
 */
+int main() {
+    GraphAdjList G(5);
+    GraphAdjList H(5);
+
+    G.addEdge(0, 1);
+    G.addEdge(1, 2);
+    G.addEdge(2, 3);
+
+    H.addEdge(0, 1);
+    H.addEdge(1, 2);
+
+    cout << (isSubGraph(G, H) ? "H é subgrafo de G" : "H não é subgrafo de G") << endl;
+
+    GraphMatrix Gm(5);
+    GraphMatrix Hm(5);
+
+    Gm.addEdge(0, 1);
+    Gm.addEdge(1, 2);
+    Gm.addEdge(2, 3);
+
+    Hm.addEdge(0, 1);
+    Hm.addEdge(1, 2);
+
+    cout << (isSubGraph(Gm, Hm) ? "Hm é subgrafo de Gm" : "Hm não é subgrafo de Gm") << endl;
+
+    return 0;
+}
