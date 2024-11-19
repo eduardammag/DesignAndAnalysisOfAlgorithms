@@ -1,9 +1,8 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <tuple>
-#include <queue>       
-#include <set>         
+#include <queue>
+#include <set>
 #include <limits>
 
 using namespace std;
@@ -24,7 +23,7 @@ public:
     void setNext(EdgeNode* next) { m_next = next; }
 };
 
-// Classe que representa o grafo usando listas de adjacência
+// Classe que representa o grafo usando listas de adjacência (direcionado)
 class GraphAdjList {
 private:
     int m_numVertices;
@@ -41,10 +40,9 @@ public:
         }
     }
 
-    // Adiciona uma aresta ao grafo
+    // Adiciona uma aresta direcionada ao grafo
     void addEdge(vertex v1, vertex v2, int weight) {
-        m_edges[v1] = new EdgeNode(v2, m_edges[v1]);
-        m_edges[v2] = new EdgeNode(v1, m_edges[v2]); // Grafo não-direcionado
+        m_edges[v1] = new EdgeNode(v2, m_edges[v1]); // Aresta de v1 -> v2
         m_allEdges.emplace_back(v1, v2, weight);
         m_numEdges++;
     }
