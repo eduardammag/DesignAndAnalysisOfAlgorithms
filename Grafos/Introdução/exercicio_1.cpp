@@ -185,24 +185,30 @@ public:
 };
 
 
-
-
 // Função para verificar se um grafo H é subgrafo de G usando matriz de adjacência
 bool isSubGraph(const GraphMatrix& G, const GraphMatrix& h) {
-    bool** gEdges = G.edges();
-    bool** hEdges = h.edges();
+    // Obtenha as matrizes de adjacência dos grafos G e H
+    bool** gEdges = G.edges();  // Matriz de adjacências do grafo G
+    bool** hEdges = h.edges();  // Matriz de adjacências do grafo H
 
+    // Itera sobre todos os vértices do grafo H
     for (vertex i = 0; i < h.numVertices(); i++) {
+        // Itera sobre todos os vértices do grafo H
         for (vertex j = 0; j < h.numVertices(); j++) {
+            // Se houver uma aresta entre os vértices i e j no grafo H
             if (hEdges[i][j]) {
+                // Verifica se essa aresta também existe no grafo G
                 if (!gEdges[i][j]) {
+                    // Se a aresta não existir em G, H não é um subgrafo de G
                     return false;
                 }
             }
         }
     }
+    // Se todas as arestas de H forem encontradas em G, então H é um subgrafo de G
     return true;
 }
+
 
 /* 
 Complexidade:
