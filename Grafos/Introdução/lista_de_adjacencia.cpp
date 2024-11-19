@@ -1,6 +1,9 @@
 // Implemente uma classe para representar um grafo utilizando lista de adjacências
 #include <iostream>
 using namespace std;
+// Implemente uma classe para representar um grafo utilizando lista de adjacências
+#include <iostream>
+using namespace std;
 
 // Define o tipo "vertex" como um sinonimo para "int"
 typedef int vertex;
@@ -109,12 +112,60 @@ public:
         }
         delete[] m_edges; // Libera o array de listas de adjacência.
     }
+    
+    
+    // Método getter para m_edges (lista de adjacência)
+    EdgeNode** edges() {
+        return m_edges;
+    }
+    
+    
+    // Método que verifica se o grafo H é um subgrafo de G
+    bool isSubGraph(GraphAdjList & h) {
+    // Obtém a lista de adjacência de H
+    EdgeNode ** hEdges = h.edges();  
+    
+    // Itera sobre cada vértice de G
+    for (vertex i = 0; i < m_numVertices; i++) {  // Para cada vértice de G
+        // Obtém a lista de arestas do vértice 'i' no grafo H
+        EdgeNode * hEdge = hEdges[i];
+        
+        // Verifica cada aresta em H para o vértice 'i'
+        while (hEdge) {  // Para cada aresta em H ligada ao vértice i
+            // Obtém a lista de arestas do vértice 'i' no grafo G
+            EdgeNode * gEdge = m_edges[i];
+            bool found = false;
+            
+            // Verifica se a aresta de H existe em G
+            while (gEdge) {  // Para cada aresta em G ligada ao vértice i
+                // Se encontrar a aresta correspondente, marca como encontrada
+                if (hEdge->otherVertex() == gEdge->otherVertex()) {
+                    found = true;
+                    break;  // Se encontrar, sai do loop
+                }
+                gEdge = gEdge->next();  // Avança para a próxima aresta em G
+            }
+            
+            // Se a aresta de H não foi encontrada em G, retorna false
+            if (!found) { 
+                return false;  
+            }
+            
+            hEdge = hEdge->next();  // Avança para a próxima aresta em H
+        }
+    }
+    
+    // Se todas as arestas de H foram encontradas em G, retorna true
+    return true;
+}
+
 };
 
 int main() {
-    GraphAdjList g(6); // Cria um grafo com 6 vértices.
+     // Criando o grafo principal (g) com 6 vértices
+    GraphAdjList g(6);
 
-    // Adiciona algumas arestas ao grafo.
+    // Adicionando arestas ao grafo g
     g.addEdge(0, 1);
     g.addEdge(0, 2);
     g.addEdge(1, 3);
@@ -124,23 +175,45 @@ int main() {
     g.addEdge(4, 5);
     g.addEdge(4, 1);
 
-    // Exibe todas as arestas do grafo.
-    cout << "Lista de arestas antes de remover alguma aresta:" << endl;
+    // Criando o grafo h (subgrafo) com 6 vértices
+    GraphAdjList h(6);
+
+    // Adicionando arestas ao grafo h (subgrafo)
+    h.addEdge(0, 1);
+    h.addEdge(0, 2);
+    h.addEdge(1, 3);
+    h.addEdge(1, 4);
+    h.addEdge(2, 4);
+    h.addEdge(3, 4);
+
+    // Exibindo as arestas do grafo g (principal)
+    cout << "Grafo G (principal):" << endl;
     g.print();
 
-    // Remove uma aresta.
-    g.removeEdge(4, 1);
+    // Exibindo as arestas do grafo h (subgrafo)
+    cout << "Grafo H (subgrafo):" << endl;
+    h.print();
 
-    // Exibe todas as arestas novamente.
-    cout << "Lista de arestas após remover a aresta (4,1):" << endl;
-    g.print();
+    // Verificando se o grafo h é subgrafo de g
+    if (g.isSubGraph(h)) {
+        cout << "O grafo H é um subgrafo de G." << endl;
+    } else {
+        cout << "O grafo H não é um subgrafo de G." << endl;
+    }
 
-    // Remove outra aresta.
-    g.removeEdge(1, 3);
+    // Modificando o grafo h para testar o caso negativo
+    h.removeEdge(1, 3); // Removendo uma aresta que está presente em g mas não em h
 
-    // Exibe as arestas novamente.
-    cout << "Lista de arestas após remover a aresta (1,3):" << endl;
-    g.print();
+    // Exibindo as arestas do grafo h após a modificação
+    cout << "Grafo H após remoção da aresta (1, 3):" << endl;
+    h.print();
+
+    // Verificando novamente se h é subgrafo de g após a modificação
+    if (g.isSubGraph(h)) {
+        cout << "O grafo H é um subgrafo de G." << endl;
+    } else {
+        cout << "O grafo H não é um subgrafo de G." << endl;
+    }
 
     return 0;
 }
