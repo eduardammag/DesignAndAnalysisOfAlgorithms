@@ -159,6 +159,22 @@ public:
     return true;
 }
 
+/*
+Complexidade da função `isSubGraph()`:
+
+- O loop externo percorre todos os vértices de G (O(V)), onde V é o número de vértices em G.
+- Para cada vértice de G, a função percorre as arestas em H (O(E₁)) para esse vértice, onde E₁ é o número de arestas em H conectadas a cada vértice.
+- Para cada aresta de H, a função percorre as arestas em G (O(E₂)) para o mesmo vértice, onde E₂ é o número de arestas de G conectadas ao vértice.
+
+A complexidade total será aproximadamente O(V * (E₁ + E₂)).
+
+No pior caso, onde o número de arestas em H e G é proporcional ao número de vértices (grafos densos), a complexidade pode ser O(V²). No entanto, para grafos esparsos, a complexidade é mais eficiente, sendo O(V * E), onde E é o número total de arestas de G e H.
+
+Portanto, a complexidade da função `isSubGraph()` é O(V * E), onde:
+- V é o número de vértices de G.
+- E é o número total de arestas em G e H.
+*/
+
 };
 
 int main() {
