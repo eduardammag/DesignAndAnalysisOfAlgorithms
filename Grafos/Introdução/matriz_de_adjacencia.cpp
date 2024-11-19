@@ -1,9 +1,9 @@
 //Implemente uma classe para representar um grafo utilizando matriz de adjacências
-#include <iostream> 
+#include <iostream>
 using namespace std;
 
 // Define um tipo `vertex` como sinônimo de `int`
-typedef int vertex; 
+typedef int vertex;
 
 // Declaração da classe GraphMatrix para representar um grafo com matriz de adjacência
 class GraphMatrix {
@@ -46,6 +46,28 @@ public:
         }
     }
 
+   // Método que verifica se o grafo H é um subgrafo de G
+    bool isSubGraph(GraphMatrix &h) {
+        if (h.m_numVertices > m_numVertices) {
+            return false;  // H não pode ser subgrafo de G se tiver mais vértices
+        }
+
+        bool **hEdges = h.edges(); // Obtém a matriz de adjacência do grafo H
+        for (vertex i = 0; i < h.m_numVertices; i++) {  // Itera apenas sobre os vértices de H
+            for (vertex j = 0; j < h.m_numVertices; j++) {
+                if (hEdges[i][j]) {  // Se houver uma aresta em H
+                    if (!m_edges[i][j]) {  // Verifica se essa aresta existe em G
+                        return false;  // Se não existir, H não é subgrafo de G
+                    }
+                }
+            }
+        }
+        return true;  // Caso todas as arestas de H estejam em G, H é subgrafo de G
+    }
+
+    // Retorna a matriz de adjacência do grafo
+    bool **edges() { return m_edges; }
+
     // Imprime todas as arestas do grafo como pares de vértices
     void print() const {
         for (vertex i = 0; i < m_numVertices; i++) {      // Percorre todas as linhas
@@ -78,27 +100,34 @@ public:
 };
 
 int main() {
-    GraphMatrix g1(6); // Cria um grafo com 6 vértices
+    // Cria dois grafos
+    GraphMatrix g1(6); // Grafo G com 6 vértices
+    GraphMatrix g2(4); // Grafo H com 4 vértices
 
-    // Imprime a matriz de adjacência inicial
-    g1.printMatrix();
-
-    // Adiciona várias arestas ao grafo
+    // Adiciona arestas ao grafo G
     g1.addEdge(0, 1);
-    g1.addEdge(0, 0);
     g1.addEdge(0, 2);
     g1.addEdge(1, 3);
-    g1.addEdge(1, 4);
-    g1.addEdge(2, 4);
+    g1.addEdge(2, 3);
     g1.addEdge(3, 4);
-    g1.addEdge(4, 5);
-    g1.addEdge(4, 1);
 
-    // Imprime as arestas na forma de pares de vértices
-    g1.print();
+    // Adiciona arestas ao grafo H (subgrafo de G)
+    g2.addEdge(0, 1);
+    g2.addEdge(0, 2);
+    g2.addEdge(1, 3);
 
-    // Imprime novamente a matriz de adjacência após as adições
+    // Imprime as matrizes de adjacência
+    cout << "Matriz de adjacência do grafo G:" << endl;
     g1.printMatrix();
+    cout << "\nMatriz de adjacência do grafo H:" << endl;
+    g2.printMatrix();
+
+    // Verifica se H é subgrafo de G
+    if (g1.isSubGraph(g2)) {
+        cout << "\nH é um subgrafo de G!" << endl;
+    } else {
+        cout << "\nH não é um subgrafo de G." << endl;
+    }
 
     return 0; // Finaliza o programa
 }
