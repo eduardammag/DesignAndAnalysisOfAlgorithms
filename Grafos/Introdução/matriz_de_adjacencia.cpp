@@ -10,7 +10,11 @@ class GraphMatrix {
 private:
     int m_numVertices; // Número de vértices no grafo
     int m_numEdges;    // Número de arestas no grafo
-    bool** m_edges;    // Ponteiro duplo para representar a matriz de adjacência
+    bool** m_edges;    // Ponteiro duplo para representar a matriz
+//Aqui, duas estrelas (**) indicam que m_edges é um ponteiro para um ponteiro.
+//O m_edges é um ponteiro que pode armazenar o endereço de outro ponteiro.
+//Esse outro ponteiro armazenará o endereço de um valor do tipo bool.
+
 
 public:
     // Construtor que inicializa o grafo com um número específico de vértices
@@ -46,6 +50,10 @@ public:
         }
     }
 
+    // Retorna a matriz de adjacência do grafo
+    bool **edges() { 
+        return m_edges; }
+
    // Método que verifica se o grafo H é um subgrafo de G
     bool isSubGraph(GraphMatrix &h) {
         if (h.m_numVertices > m_numVertices) {
@@ -65,8 +73,6 @@ public:
         return true;  // Caso todas as arestas de H estejam em G, H é subgrafo de G
     }
 
-    // Retorna a matriz de adjacência do grafo
-    bool **edges() { return m_edges; }
 
     // Imprime todas as arestas do grafo como pares de vértices
     void print() const {
