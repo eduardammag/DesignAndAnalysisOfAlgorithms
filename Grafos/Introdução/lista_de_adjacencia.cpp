@@ -1,9 +1,6 @@
 // Implemente uma classe para representar um grafo utilizando lista de adjacências
 #include <iostream>
 using namespace std;
-// Implemente uma classe para representar um grafo utilizando lista de adjacências
-#include <iostream>
-using namespace std;
 
 // Define o tipo "vertex" como um sinonimo para "int"
 typedef int vertex;
@@ -16,8 +13,8 @@ private:
 
 public:
     // Construtor que inicializa o vértice de destino e o próximo nó.
-    EdgeNode(vertex otherVertex, EdgeNode* next)
-        : m_otherVertex(otherVertex), m_next(next) {}
+    EdgeNode(vertex otherVertex, EdgeNode* next):
+    m_otherVertex(otherVertex), m_next(next) {}
 
     // Retorna o vértice de destino da aresta.
     vertex otherVertex() const {
@@ -44,8 +41,8 @@ private:
 
 public:
     // Construtor que inicializa o grafo com um número fixo de vértices.
-    GraphAdjList(int numVertices)
-        : m_numVertices(numVertices), m_numEdges(0) {
+    GraphAdjList(int numVertices):
+    m_numVertices(numVertices), m_numEdges(0) {
         m_edges = new EdgeNode*[numVertices]; // Aloca espaço para as listas.
         for (vertex i = 0; i < numVertices; i++) {
             m_edges[i] = NULL; // Inicializa todas as listas como vazias.
@@ -168,7 +165,8 @@ Complexidade da função `isSubGraph()`:
 
 A complexidade total será aproximadamente O(V * (E₁ + E₂)).
 
-No pior caso, onde o número de arestas em H e G é proporcional ao número de vértices (grafos densos), a complexidade pode ser O(V²). No entanto, para grafos esparsos, a complexidade é mais eficiente, sendo O(V * E), onde E é o número total de arestas de G e H.
+No pior caso, onde o número de arestas em H e G é proporcional ao número de vértices (grafos densos), a complexidade pode ser O(V²). 
+No entanto, para grafos esparsos, a complexidade é mais eficiente, sendo O(V * E), onde E é o número total de arestas de G e H.
 
 Portanto, a complexidade da função `isSubGraph()` é O(V * E), onde:
 - V é o número de vértices de G.
