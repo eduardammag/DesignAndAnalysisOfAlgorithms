@@ -55,21 +55,25 @@ public:
 
 // Função para calcular a altura de um nó na árvore binária
 int nodeHeight(Node *node) {
+    // Verifica se o nó é nulo (caso base para árvore vazia ou subárvore vazia)
     if (node == NULL) {
         return -1; // Altura de árvore vazia é -1
     }
     
-    // Calcula a altura das subárvores esquerda e direita
+    // Chama recursivamente para calcular a altura da subárvore esquerda
     int leftHeight = nodeHeight(node->leftNode());
+
+    // Chama recursivamente para calcular a altura da subárvore direita
     int rightHeight = nodeHeight(node->rightNode());
 
-    // Retorna a maior altura entre as subárvores mais 1 (para contar o nó atual)
+    // Verifica qual subárvore tem maior altura (esquerda ou direita)
     if (leftHeight > rightHeight) {
+        // Se a altura da subárvore esquerda é maior, retorna leftHeight + 1 (contando o nó atual)
         return leftHeight + 1;
     } else {
+        // Caso contrário, retorna rightHeight + 1 (contando o nó atual)
         return rightHeight + 1;
     }
-
 }
 
 int main() {
