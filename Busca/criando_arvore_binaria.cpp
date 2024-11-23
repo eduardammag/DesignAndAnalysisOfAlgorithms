@@ -1,4 +1,3 @@
-//Criando uma estrutura de dados árvore binária 
 #include <iostream>
 using namespace std;
 
