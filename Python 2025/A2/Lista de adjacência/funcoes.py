@@ -77,3 +77,43 @@ def is_topological(graph: GraphList) -> bool:
     return True
 
 # 4) Crie um algoritmo para determinar se um grafo possui ordenação topológica e determiná-la
+def has_topological_order(graph: "GraphList"):
+    """
+    Determina se um grafo direcionado possui ordenação topológica usando lista de adjacência
+    e, se existir, retorna essa ordenação.
+
+    Parâmetros:
+        graph (GraphList): Grafo representado por lista de adjacência.
+
+    Retorna:
+        (bool, list): 
+            - True e lista com a ordem topológica se o grafo for acíclico.
+            - False e lista vazia se o grafo contiver ciclos.
+    """
+    num_vertices = graph.num_vertices
+    in_degree = [0] * num_vertices  # Inicializa o grau de entrada de cada vértice
+
+    # Calcula o grau de entrada
+    for u in range(num_vertices):
+        for v in graph.adj_list[u]:
+            in_degree[v] += 1
+
+    # Inicializa a fila de vértices com grau de entrada zero
+    queue = [v for v in range(num_vertices) if in_degree[v] == 0]
+
+    processed = []  # Lista para armazenar a ordem topológica
+
+    index = 0  # Índice para simular a fila sem pop(0)
+    while index < len(queue):
+        v = queue[index]
+        index += 1
+        processed.append(v)
+
+        # Para cada vértice adjacente a v
+        for u in graph.adj_list[v]:
+            in_degree[u] -= 1
+            if in_degree[u] == 0:
+                queue.append(u)
+
+    has_order = len(processed) == num_vertices
+    return has_order, processed

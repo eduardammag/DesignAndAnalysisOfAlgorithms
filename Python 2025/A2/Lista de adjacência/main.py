@@ -101,3 +101,28 @@ print("A numeraçao e topologica?", is_topological(g7))
 # Adicionando uma aresta que viola a topologia
 g7.add_edge(3, 1)
 print("Apos adicionar 3 -> 1, a numeraçao e topologica?", is_topological(g7))
+
+print("###############################")
+
+# Criando grafo
+g8 = GraphList(6)
+g8.add_edge(5, 2)
+g8.add_edge(5, 0)
+g8.add_edge(4, 0)
+g8.add_edge(4, 1)
+g8.add_edge(2, 3)
+g8.add_edge(3, 1)
+
+g9 = GraphList(3)
+g9.add_edge(0, 1)
+g9.add_edge(1, 2)
+g9.add_edge(2, 0) 
+
+# Função de ordenação topologica
+has_order, order = has_topological_order(g8)
+print("Tem ordenação topologica?", has_order)
+print("Ordem topologica:", order)
+
+has_order, order = has_topological_order(g9)
+print("Tem ordenação topologica?", has_order)
+print("Ordem topologica:", order)

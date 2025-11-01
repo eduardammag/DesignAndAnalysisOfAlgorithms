@@ -107,3 +107,28 @@ print(is_topological(g9))
 
 g9.add_edge(3, 1)  
 print(is_topological(g9))  
+
+print("###############################")
+
+# Criando grafo
+g10 = GraphMatrix(6)
+g10.add_edge(5, 2)
+g10.add_edge(5, 0)
+g10.add_edge(4, 0)
+g10.add_edge(4, 1)
+g10.add_edge(2, 3)
+g10.add_edge(3, 1)
+
+g11 = GraphMatrix(3)
+g11.add_edge(0, 1)
+g11.add_edge(1, 2)
+g11.add_edge(2, 0) 
+
+# Função de ordenação topológica
+has_order, order = has_topological_order(g10)
+print("Tem ordenação topológica?", has_order)
+print("Ordem topológica:", order)
+
+has_order, order = has_topological_order(g11)
+print("Tem ordenação topológica?", has_order)
+print("Ordem topológica:", order)

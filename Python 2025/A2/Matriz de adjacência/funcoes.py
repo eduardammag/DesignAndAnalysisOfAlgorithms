@@ -75,3 +75,54 @@ def is_topological(graph: GraphMatrix) -> bool:
     return True
 
 # 4) Crie um algoritmo para determinar se um grafo possui ordenação topológica e determiná-la
+
+def has_topological_order(graph: "GraphMatrix"):
+    """
+    Determina se um grafo direcionado possui ordenação topológica e, se existir,
+    retorna essa ordenação.
+
+    Parâmetros:
+        graph (GraphMatrix): Grafo representado por matriz de adjacência.
+
+    Retorna:
+        (bool, list): 
+            - True e lista com a ordem topológica se o grafo for acíclico.
+            - False e lista vazia se o grafo contiver ciclos.
+    """
+
+    num_vertices = graph.num_vertices  # Número total de vértices no grafo
+    in_degree = [0] * num_vertices     # Lista para armazenar o grau de entrada de cada vértice
+
+    # Calcula o grau de entrada (in-degree) de cada vértice
+    # Para cada aresta u -> v, incrementa in_degree[v]
+    for u in range(num_vertices):
+        for v in range(num_vertices):
+            if graph.has_edge(u, v):
+                in_degree[v] += 1
+
+    # Inicializa a fila de vértices com grau de entrada zero
+    # Esses vértices podem começar a ordenação topológica
+    queue = [v for v in range(num_vertices) if in_degree[v] == 0]
+
+    processed = []  # Lista para armazenar a ordem de processamento dos vértices
+
+    index = 0  # Índice para simular a remoção de elementos da fila sem usar pop(0)
+    while index < len(queue):
+        v = queue[index]  # Pega o próximo vértice da fila
+        index += 1        # Avança o índice (equivalente a remover da fila)
+        processed.append(v)  # Adiciona o vértice à ordem topológica
+
+        # Para cada vértice adjacente a v
+        # Reduz o grau de entrada, pois removemos v da "fila"
+        for u in range(num_vertices):
+            if graph.has_edge(v, u):
+                in_degree[u] -= 1
+                # Se o grau de entrada de u chegou a zero, adiciona à fila
+                if in_degree[u] == 0:
+                    queue.append(u)
+
+    # Se todos os vértices foram processados, o grafo é acíclico e possui ordenação topológica
+    has_order = len(processed) == num_vertices
+
+    # Retorna True + lista com a ordem topológica ou False + lista parcial/vazia
+    return has_order, processed
