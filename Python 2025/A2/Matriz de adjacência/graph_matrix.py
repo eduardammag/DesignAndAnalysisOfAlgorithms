@@ -33,15 +33,3 @@ class GraphMatrix:
                 print( 1 if self.has_edge(i,j) else 0, end = " ")
             print()    
 
-
-# para G e H com o mesmo número de vértices, H é subgrafo de G?
-def is_subgraph(G: GraphMatrix, H: GraphMatrix) -> bool:
-    if G.num_vertices != H.num_vertices:
-        return False
-    
-    for i in range(H.num_vertices):
-        for j in range(H.num_vertices):
-            if H.has_edge(i,j) and not G.has_edge(i,j):
-                return False
-
-    return True    #complexidade O(V²)
